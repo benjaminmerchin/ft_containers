@@ -6,6 +6,8 @@
 
 <!-- LOCAL
 [Red Black Tree](file:///Users/bmerchin/Desktop/Introduction_to_Algorithms.pdf)
+[Red Black Tree video in french](https://www.youtube.com/watch?v=h1Z8_ebEqao)
+
 Faire d'abord Vector, ensuite Stack/Map
 Si je fais l'arbre rouge et noir pour Stack/Map ca rajoute a peine 100 lignes de faire Set
 
@@ -25,5 +27,12 @@ Implelemter toutes les features meme depreciees de la version cpp98
 
 <!-- NOTIONS
 polymorphisme: des fonctions fonctionnent differemment en fonction du type des arguments, comme pour le constructeur de classes canoniques
+
+tolook:
+https://www.geeksforgeeks.org/how-to-implement-our-own-vector-class-in-c/
+
+https://www.geeksforgeeks.org/stdallocator-in-cpp-with-examples/
+
+todo constructors destructors
 -->
 

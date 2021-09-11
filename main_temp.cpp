@@ -18,7 +18,7 @@ int main(void) {
 	a.push_back(time(0)%10);
 	a.push_back(time(0)%9);
 	a.push_back(time(0)%7);
-	
+
 	typedef std::vector<int>::iterator iterator;
 
 	for (iterator it_a = a.begin(); it_a != a.end(); ++it_a) 
@@ -26,7 +26,10 @@ int main(void) {
 	std::cout << "\n------------------\n";
 
 	ft::vector<int> b;
+	//std::cout << '@';
+	std::vector<int>::iterator it;
 
 
 	return 0;
 }
+

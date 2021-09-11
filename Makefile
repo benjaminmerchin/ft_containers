@@ -37,11 +37,11 @@ $(NAME): $(OBJ)
 	@echo "${GREEN}Compilation Done${RESET}"
 
 $(OBJDIR)/%.o: %.cpp
-	@mkdir -p objects
+	@mkdir -p $(OBJDIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) -f $(OBJ_TEST)
 
 fclean: clean
 	@rm -f $(NAME)
