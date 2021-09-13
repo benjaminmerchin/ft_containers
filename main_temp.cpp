@@ -13,6 +13,7 @@ struct MyAlloc : std::allocator<type> {
 
 int main(void) {
 	std::vector<int, MyAlloc<int> > a;
+	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << std::endl;
 	a.push_back(time(0)%3);
 	a.push_back(time(0)%15);
 	a.push_back(time(0)%10);
@@ -23,12 +24,14 @@ int main(void) {
 
 	for (iterator it_a = a.begin(); it_a != a.end(); ++it_a) 
 		std::cout << *it_a << ' ';
-	std::cout << "\n------------------\n";
+	std::cout << std::endl;
+	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << std::endl;
+	
+	std::cout << "------------------\n";
 
-	ft::vector<int> b;
+	ft::vector<char> b(2, 'c');
 	//std::cout << '@';
-	std::vector<int>::iterator it;
-
+	//std::vector<int>::iterator it;
 
 	return 0;
 }
