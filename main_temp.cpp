@@ -29,7 +29,7 @@ int main(void) {
 	
 	std::cout << "------------------\n";
 
-	ft::vector<char> b(2, 'c');
+	ft::vector<int> b(2, 3);
 	//std::cout << '@';
 	//std::vector<int>::iterator it;
 

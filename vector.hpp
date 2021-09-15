@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include "vector_iterator.hpp"
+#include "utils.cpp"
 
 //https://en.cppreference.com/w/cpp/header/vector copier le header class template
 //iterators_traits, reverse_iterator, enable_if, is_integral, equal/lexicographical compare, std::pair, std::make_pair, must be reimplemented.
@@ -16,14 +17,24 @@ template <class T, class Alloc = std::allocator<T> >
 class vector {
 
 public:
-	typedef T value_type;
-	typedef value_type* pointer_type;
-	typedef value_type& reference_type;
-	typedef Alloc allocator_type;
-	typedef typename allocator_type::size_type size_type; //double check
+	//list of the typedef required: https://cplusplus.com/reference/vector/vector/
+	typedef T                                        value_type;
+	typedef value_type*                              pointer_type;
+	typedef value_type&                              reference_type;
+	typedef Alloc                                    allocator_type;
+	typedef typename allocator_type::reference       reference;
+	typedef typename allocator_type::const_reference const_reference;
+	// typedef implementation-defined                   iterator;
+	// typedef implementation-defined                   const_iterator;
+	typedef typename allocator_type::size_type       size_type;
+	typedef typename allocator_type::difference_type difference_type;
+	typedef typename allocator_type::pointer         pointer;
+	typedef typename allocator_type::const_pointer   const_pointer;
+	// typedef std::reverse_iterator<iterator>          reverse_iterator;
+	// typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 protected:
-	//type
+	allocator_type alloc_type; //ie:        std::allocator<T> alloc_type;
 	value_type * content;
 	size_t size;
 	size_t capacity;
@@ -35,15 +46,20 @@ public:
 	// fill (2)	
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) {
 		size = n;
-		content = alloc(n * sizeof(value_type)));
-		for (int i = 0; i < n; i++)
+		capacity = n;
+		(void)alloc;(void)val;
+		//content = alloc(n * sizeof(value_type));
+		content = alloc_type.allocate(n);
+		for (size_type i = 0; i < n; i++)
 			content[n] = val;
 		std::cerr << "Fill Allocator\n";
-		std::cerr << content[0];
+		std::cerr << content[0] << std::endl;
 	}
 	// range (3)	
 	template <class InputIterator>
-	vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) {
+	//vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) 
+	vector (typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type())
+	{
 		(void)first;
 		(void)last;
 		(void)alloc;
