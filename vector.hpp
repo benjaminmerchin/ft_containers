@@ -34,19 +34,20 @@ public:
 	// typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 protected:
-	allocator_type alloc_type; //ie:        std::allocator<T> alloc_type;
-	value_type * content;
-	size_t size;
-	size_t capacity;
+	allocator_type alloc_type; //ie:        std::allocator<T> alloc_type; basically we store the Alloc which is a class
+	//std::allocator<T> alloc_type;
+	pointer_type content;
+	size_type sz;
+	size_type cap; //toujours une puissance de 2
 
 public:
 	// 4 constructors required: default/fill/range/copy
 	// default (1)	
-	explicit vector (const allocator_type& alloc = allocator_type()) : content(NULL), size(0), capacity(0) {(void)alloc;std::cerr << "Default Allocator\n";}
+	explicit vector (const allocator_type& alloc = allocator_type()) : content(NULL), sz(0), cap(0) {(void)alloc;std::cerr << "Default Allocator\n";}
 	// fill (2)	
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) {
-		size = n;
-		capacity = n;
+		sz = n;
+		cap = n;
 		(void)alloc;(void)val;
 		//content = alloc(n * sizeof(value_type));
 		content = alloc_type.allocate(n);
@@ -70,10 +71,32 @@ public:
 		(void)x;
 		std::cerr << "Copy Allocator\n";
 	}
-	~vector(){delete [] content;}
+	~vector() {delete [] content;}
+
+	void push_back(const value_type& val) {
+		if (sz == cap) //size is always lower (enough space) or equal
+			add_space(1);
+		content[sz] = val;
+		sz++;
+	}
+	void pop_back() {sz--;}
+	//size_type size() const {return s;}
+	//size_type capacity() const {return cap;}
 
 private:
-	
+	void add_space(int n) {
+		if (n + sz <= cap) //useless ?
+			return ;
+		if (cap == 0)
+			cap = 1;
+		while (n + sz > cap)
+			cap *= 2;
+		pointer_type update = alloc_type.allocate(cap);
+		for (int i = 0; i < sz; i++)
+			update[i] = content[i];
+		delete [] content;
+		content = update;
+	}
 };
 
 }
