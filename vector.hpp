@@ -26,7 +26,8 @@ public:
 	typedef Alloc                                    allocator_type;
 	typedef typename allocator_type::reference       reference;
 	typedef typename allocator_type::const_reference const_reference;
-	// typedef implementation-defined                   iterator;
+	typedef vector_iterator<value_type>              iterator;
+	//typedef typename allocator_traits<allocator_type>::pointer              iterator;
 	// typedef implementation-defined                   const_iterator;
 	typedef typename allocator_type::size_type       size_type;
 	typedef typename allocator_type::difference_type difference_type;
@@ -37,7 +38,7 @@ public:
 
 protected:
 	allocator_type alloc_type; //ie:        std::allocator<T> alloc_type; basically we store the Alloc which is a class
-	//std::allocator<T> alloc_type;			
+	//std::allocator<T> alloc_type;
 	pointer_type content;
 	size_type sz;
 	size_type cap; //toujours une puissance de 2
@@ -107,6 +108,9 @@ public:
 	const_reference back() const {return content[sz - 1];}
 
 //MODIFIERS
+	// template <class InputIterator>
+	// void assign (InputIterator first, InputIterator last);
+	// void assign (size_type n, const value_type& val);
 	void push_back(const value_type& val) {
 		if (sz == cap) //size is always lower (enough space) or equal
 			add_space(1);
@@ -114,9 +118,14 @@ public:
 		sz++;
 	}
 	void pop_back() {sz--;}
-	void swap(vector& x) {ft::vector<value_type> temp(x); x = *this; *this = temp;}
+	// iterator insert (iterator position, const value_type& val);
+	// void insert (iterator position, size_type n, const value_type& val);
+	// template <class InputIterator>
+	// void insert (iterator position, InputIterator first, InputIterator last);
 	//iterator erase(iterator position);
 	//iterator erase(iterator first, iterator last);
+	void swap(vector& x) {ft::vector<value_type> temp(x); x = *this; *this = temp;}
+	void clear() {sz = 0;}
 
 //ALLOCATOR
 	allocator_type get_allocator() const {return alloc_type;}
@@ -138,8 +147,8 @@ private:
 };
 
 //NON-MEMBER FUNCTION OVERLOADS
-	template <class TT, class Allocc>
-	bool operator== (const vector<TT,Allocc>& lhs, const vector<TT,Allocc>& rhs) {
+	template <class T, class Alloc>
+	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 		if (lhs.sz != rhs.sz)
 			return false;
 		for (int i = 0; i < lhs.sz; i++)
@@ -149,18 +158,24 @@ private:
 	}
 	template <class T, class Alloc>
 	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return !(lhs == rhs);}
-	// template <class T, class Alloc>
-	// bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-	// 	(void)lhs;
-	// 	(void)rhs;
-	// 	for (int i = 0; i < lhs.sz; i++)
-	// }
-	// template <class T, class Alloc>
-	// bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	template <class T, class Alloc>
+	bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+		int i = 0;
+		while (i < lhs.sz) {
+			if (lhs[i] < rhs[i])
+				return true;
+			if (lhs[i] > rhs[i])
+				return false;
+			i++;
+		}
+		return false;
+	}
+	template <class T, class Alloc>
+	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return (lhs < rhs || lhs == rhs);}
+	template <class T, class Alloc>
+	bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return rhs < lhs;}
+	template <class T, class Alloc>
+	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return (lhs > rhs || lhs == rhs);}
 	template <class T, class Alloc>
 	void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {x.swap(y);}
 
