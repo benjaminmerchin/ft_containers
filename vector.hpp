@@ -121,21 +121,6 @@ public:
 //ALLOCATOR
 	allocator_type get_allocator() const {return alloc_type;}
 
-//NON-MEMBER FUNCTION OVERLOADS
-	// template <class T, class Alloc>
-	// bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-	// template <class T, class Alloc>
-	// bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
-// swap Exchange contents of vectors (function template )
-
 private:
 	void add_space(int n) {
 		if (n + sz <= cap) //no need to add space
@@ -151,6 +136,33 @@ private:
 		content = update;
 	}
 };
+
+//NON-MEMBER FUNCTION OVERLOADS
+	template <class TT, class Allocc>
+	bool operator== (const vector<TT,Allocc>& lhs, const vector<TT,Allocc>& rhs) {
+		if (lhs.sz != rhs.sz)
+			return false;
+		for (int i = 0; i < lhs.sz; i++)
+			if (lhs[i] != rhs[i])
+				return false;
+		return true;
+	}
+	template <class T, class Alloc>
+	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return !(lhs == rhs);}
+	// template <class T, class Alloc>
+	// bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+	// 	(void)lhs;
+	// 	(void)rhs;
+	// 	for (int i = 0; i < lhs.sz; i++)
+	// }
+	// template <class T, class Alloc>
+	// bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	// template <class T, class Alloc>
+	// bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	// template <class T, class Alloc>
+	// bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+	template <class T, class Alloc>
+	void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) {x.swap(y);}
 
 }
 
