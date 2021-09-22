@@ -13,7 +13,7 @@ struct MyAlloc : std::allocator<type> {
 
 int main(void) {
 	std::vector<int, MyAlloc<int> > a;
-	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << std::endl;
+	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
 	a.push_back(time(0)%3);
 	a.push_back(time(0)%15);
 	a.push_back(time(0)%10);
@@ -25,14 +25,22 @@ int main(void) {
 	for (iterator it_a = a.begin(); it_a != a.end(); ++it_a) 
 		std::cout << *it_a << ' ';
 	std::cout << std::endl;
-	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << std::endl;
-	
+	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\taddress:" << &a << std::endl;
+	a.resize(4);
+	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\taddress:" << &a << std::endl;
+
 	std::cout << "------------------\n";
 
 	ft::vector<int> b(2, 3);
+	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << "\tmax_size:" << b.max_size() << std::endl;
+	b.push_back(time(0)%3);
+	b.push_back(time(0)%15);
+	b.push_back(time(0)%10);
+	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << std::endl;
+	std::cout << "ElementIndex0:" << b[0] << std::endl;
+	
 	//std::cout << '@';
 	//std::vector<int>::iterator it;
 
 	return 0;
 }
-
