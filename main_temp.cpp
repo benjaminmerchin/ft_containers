@@ -12,7 +12,7 @@ struct MyAlloc : std::allocator<type> {
 };
 
 int main(void) {
-	std::vector<int, MyAlloc<int> > a;
+	std::vector<int/*, MyAlloc<int> */> a;
 	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
 	a.push_back(time(0)%3);
 	a.push_back(time(0)%15);
@@ -32,12 +32,18 @@ int main(void) {
 	std::cout << "------------------\n";
 
 	ft::vector<int> b(2, 3);
+	//std::cout << b[0] << ' ' << b[1] << std::endl;
 	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << "\tmax_size:" << b.max_size() << std::endl;
 	b.push_back(time(0)%3);
-	b.push_back(time(0)%15);
+	b.push_back(time(0)%14);
 	b.push_back(time(0)%10);
 	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << std::endl;
-	std::cout << "ElementIndex0:" << b[0] << std::endl;
+	//std::cout << b[0] << ' ' << b[1] << ' ' << b[2] << ' ' << b[3] << ' ' << b[4] << std::endl;
+	for (unsigned int i = 0; i < b.size(); i++)
+		std::cout << b[i] << ' ';
+	std::cout << std::endl;
+	// for (iterator it_a = a.begin(); it_a != a.end(); ++it_a) 
+	// 	std::cout << *it_a << ' ';
 	
 	//std::cout << '@';
 	//std::vector<int>::iterator it;

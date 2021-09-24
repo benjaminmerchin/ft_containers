@@ -26,7 +26,7 @@ public:
 	typedef Alloc                                    allocator_type;
 	typedef typename allocator_type::reference       reference;
 	typedef typename allocator_type::const_reference const_reference;
-	typedef vector_iterator<value_type>              iterator;
+	typedef vector_iterator<vector<value_type> >      iterator;
 	//typedef typename allocator_traits<allocator_type>::pointer              iterator;
 	// typedef implementation-defined                   const_iterator;
 	typedef typename allocator_type::size_type       size_type;
@@ -56,9 +56,9 @@ public:
 		//content = alloc(n * sizeof(value_type));
 		content = alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
-			content[n] = val;
+			content[i] = val;
 		std::cerr << "Fill Allocator\n";
-		//std::cerr << content[0] << std::endl;
+		//std::cerr << val << std::endl;
 	}
 	// range (3)
 	template <class InputIterator>
@@ -75,10 +75,13 @@ public:
 		(void)x;
 		std::cerr << "Copy Allocator\n";
 	}
-	~vector() {delete [] content;}
+	~vector() {alloc_type.deallocate(content, cap);}
+	//~vector() {delete [] content;} //deallocate plutot ?
 
 //ITERATORS
 // begin Return iterator to beginning (public member function )
+	iterator begin() {return *content;}
+	//const_iterator begin() const;
 // end Return iterator to end (public member function )
 // rbegin Return reverse iterator to reverse beginning (public member function )
 // rend Return reverse iterator to reverse end (public member function )
