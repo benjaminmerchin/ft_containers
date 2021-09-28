@@ -16,13 +16,15 @@ public:
 	typedef value_type* pointer_type;
 	typedef value_type& reference_type;
 
-	vector_iterator() : pointer(NULL) {}
-	vector_iterator(value_type * ptr) : pointer(ptr) {}
-	vector_iterator(vector_iterator const & src) : pointer(src.ptr) {}
+	vector_iterator() : _pointer(NULL) {}
+	vector_iterator(value_type * ptr) : _pointer(ptr) {}
+	vector_iterator(vector_iterator const & src) : _pointer(src.ptr) {}
 	~vector_iterator() {}
 
+	vector_iterator & operator=(vector_iterator const & rhs) {_pointer = rhs._pointer;return *this;}
+
 	vector_iterator& operator++() {
-		pointer++;
+		_pointer++;
 		return *this;
 	}
 
@@ -33,7 +35,7 @@ public:
 	}
 
 	vector_iterator& operator--() {
-		pointer--;
+		_pointer--;
 		return *this;
 	}
 
@@ -43,16 +45,22 @@ public:
 		return iterator;
 	}
 
-	value_type& operator[](int index) {return *(pointer + index);}
-	value_type* operator->() {return pointer;}
-	value_type& operator*() {return *pointer;}
+	value_type& operator[](int index) {return *(_pointer + index);}
+	value_type* operator->() {return _pointer;}
+	value_type& operator*() {return *_pointer;}
 
-	bool operator==(const vector_iterator& other) const {return pointer == other.pointer;}
+	bool operator==(const vector_iterator& other) const {return _pointer == other._pointer;}
 	bool operator!=(const vector_iterator& other) const {return !(*this == other);}
 
 private:
-	value_type * pointer;
+	value_type * _pointer;
 };
+
+template<typename T>
+std::ostream & operator<<(std::ostream & o, vector_iterator<T> & rhs) {
+	o << rhs[0];
+	return o;
+}
 
 }
 

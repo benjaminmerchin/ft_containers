@@ -46,7 +46,11 @@ int main(void) {
 	// 	std::cout << *it_a << ' ';
 	
 	//std::cout << '@';
-	//std::vector<int>::iterator it;
+	//ft::vector<int>::iterator it = b.begin();
+	/*for (ft::vector<int>::iterator it = b.begin() ; it != b.end(); ++it){
+    	//std::cout << ' ' << *it;
+		(void)*it;
+	}*/
 
 	return 0;
 }
