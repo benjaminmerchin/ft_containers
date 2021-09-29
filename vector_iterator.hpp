@@ -65,3 +65,6 @@ std::ostream & operator<<(std::ostream & o, vector_iterator<T> & rhs) {
 }
 
 #endif
+
+//ft::vector<int, std::__1::allocator<int> >::pointer_type							int *
+//ft::vector<int, std::__1::allocator<int> >::iterator								vector_iterator<vector<int> >

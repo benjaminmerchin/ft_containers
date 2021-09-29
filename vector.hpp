@@ -26,7 +26,8 @@ public:
 	typedef Alloc                                    allocator_type;
 	typedef typename allocator_type::reference       reference;
 	typedef typename allocator_type::const_reference const_reference;
-	typedef vector_iterator<vector<value_type> >      iterator;
+	typedef vector_iterator<value_type>              iterator;
+	//typedef vector_iterator<vector<value_type> >      iterator;
 	//typedef typename allocator_traits<allocator_type>::pointer              iterator;
 	// typedef implementation-defined                   const_iterator;
 	typedef typename allocator_type::size_type       size_type;
