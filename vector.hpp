@@ -38,8 +38,8 @@ public:
 	// typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 protected:
-	allocator_type alloc_type; //ie:        std::allocator<T> alloc_type; basically we store the Alloc which is a class
-	//std::allocator<T> alloc_type;
+	allocator_type _alloc_type; //ie:        std::allocator<T> _alloc_type; basically we store the Alloc which is a class
+	//std::allocator<T> _alloc_type;
 	pointer_type _array;
 	size_type _size;
 	size_type _capacity; //toujours une puissance de 2
@@ -48,14 +48,13 @@ public:
 //MEMBER FUNCTIONS
 	// 4 constructors required: default/fill/range/copy
 	// default (1)
-	explicit vector (const allocator_type& alloc = allocator_type()) : _array(NULL), _size(0), _capacity(0) {(void)alloc;std::cerr << "Default Allocator\n";}
+	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {(void)alloc;std::cerr << "Default Allocator\n";}
 	// fill (2)
-	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) {
+	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
 		_size = n;
 		_capacity = n;
-		(void)alloc;(void)val;
 		//_array = alloc(n * sizeof(value_type));
-		_array = alloc_type.allocate(n);
+		_array = _alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
 			_array[i] = val;
 		std::cerr << "Fill Allocator\n";
@@ -63,35 +62,33 @@ public:
 	}
 	// range (3)
 	template <class InputIterator>
-	//vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) 
-	vector (typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type())
-	{
-		(void)first;
-		(void)last;
-		(void)alloc;
+	vector (typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
+		for (InputIterator it = first; it != last; ++it)
+			push_back(*it);
 		std::cerr << "Range Allocator\n";
 	}
 	// copy (4)
-	vector (const vector& x) {
-		(void)x;
+	vector (const vector& x) : _alloc_type(x._alloc_type), _size(x._size), _capacity(x._capacity) {
+		_array = _alloc_type.allocate(_capacity);
+		for (size_type i = 0; i < _size; i++)
+			_array[i] = x._array[i];
 		std::cerr << "Copy Allocator\n";
 	}
-	~vector() {alloc_type.deallocate(_array, _capacity);}
-	//~vector() {delete [] _array;} //deallocate plutot ?
+	~vector() {_alloc_type.deallocate(_array, _capacity);}
 
 //ITERATORS
 // begin Return iterator to beginning (public member function )
 	iterator begin() {return iterator(_array);}
-	//const_iterator begin() const;
+	//const_iterator begin() const {return iterator(_array);}
 // end Return iterator to end (public member function )
-	//iterator end() {return iterator(_array + _size);}
-	//const_iterator end() const;
+	iterator end() {return iterator(_array + _size);}
+	//const_iterator end() const {return iterator(_array + _size);}
 // rbegin Return reverse iterator to reverse beginning (public member function )
 // rend Return reverse iterator to reverse end (public member function )
 
 //CAPACITY
 	size_type size() const {return _size;}
-	size_type max_size() const {return alloc_type.max_size();}
+	size_type max_size() const {return _alloc_type.max_size();}
 	size_type capacity() const {return _capacity;}
 	bool empty() const {return _size == 0 ? true : false;}
 	void reserve(size_type n) {add_space(n - _capacity);}
@@ -114,9 +111,17 @@ public:
 	const_reference back() const {return _array[_size - 1];}
 
 //MODIFIERS
-	// template <class InputIterator>
-	// void assign (InputIterator first, InputIterator last);
-	// void assign (size_type n, const value_type& val);
+	template <class InputIterator>
+	void assign (typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last) {
+		for (InputIterator it = first; it != last; ++it)
+			push_back(*it);
+	}
+	void assign (size_type n, const value_type& val) {
+		_array = _alloc_type.allocate(n);
+		_size = n;
+		for (size_type i = 0; i < n; i++)
+			_array[i] = val;
+	}
 	void push_back(const value_type& val) {
 		if (_size == _capacity) //size is always lower (enough space) or equal
 			add_space(1);
@@ -128,13 +133,20 @@ public:
 	// void insert (iterator position, size_type n, const value_type& val);
 	// template <class InputIterator>
 	// void insert (iterator position, InputIterator first, InputIterator last);
-	//iterator erase(iterator position);
-	//iterator erase(iterator first, iterator last);
+	iterator erase(iterator position) {
+		for (size_type i = position; i < _size + 1; i++)
+			_array[i] = _array[i + 1];
+		_size--;
+	}
+	iterator erase(iterator first, iterator last) {
+		for (ft::vector<int>::iterator it = first ; it != last; ++it)
+    		std::cout << *it << ' ';
+	}
 	void swap(vector& x) {ft::vector<value_type> temp(x); x = *this; *this = temp;}
 	void clear() {_size = 0;}
 
 //ALLOCATOR
-	allocator_type get_allocator() const {return alloc_type;}
+	allocator_type get_allocator() const {return _alloc_type;}
 
 private:
 	void add_space(int n) {
@@ -144,7 +156,7 @@ private:
 			_capacity = 1;
 		while (n + _size > _capacity)
 			_capacity *= 2;
-		pointer_type update = alloc_type.allocate(_capacity);
+		pointer_type update = _alloc_type.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			update[i] = _array[i];
 		delete [] _array;

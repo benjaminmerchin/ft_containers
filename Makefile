@@ -1,4 +1,5 @@
 NAME	=	ft_containers
+NAME_STD=	std_containers
 SEED	=	123
 CC		=	clang++
 OBJDIR	=	objects

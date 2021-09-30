@@ -18,7 +18,7 @@ public:
 
 	vector_iterator() : _pointer(NULL) {}
 	vector_iterator(value_type * ptr) : _pointer(ptr) {}
-	vector_iterator(vector_iterator const & src) : _pointer(src.ptr) {}
+	vector_iterator(vector_iterator const & src) : _pointer(src._pointer) {}
 	~vector_iterator() {}
 
 	vector_iterator & operator=(vector_iterator const & rhs) {_pointer = rhs._pointer;return *this;}
@@ -58,7 +58,7 @@ private:
 
 template<typename T>
 std::ostream & operator<<(std::ostream & o, vector_iterator<T> & rhs) {
-	o << rhs[0];
+	o << *rhs;
 	return o;
 }
 

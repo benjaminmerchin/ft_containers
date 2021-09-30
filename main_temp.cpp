@@ -42,15 +42,23 @@ int main(void) {
 	for (unsigned int i = 0; i < b.size(); i++)
 		std::cout << b[i] << ' ';
 	std::cout << std::endl;
-	// for (iterator it_a = a.begin(); it_a != a.end(); ++it_a) 
-	// 	std::cout << *it_a << ' ';
+	for (ft::vector<int>::iterator it = b.begin() ; it != b.end(); ++it)
+    	std::cout << *it << ' ';
+	std::cout << std::endl;
+
+	std::cout << "------------------\n";
+
+	ft::vector<int> c(2, 3);
+	c.assign(7, 100);
+	for (unsigned int i = 0; i < c.size(); i++)
+		std::cout << c[i] << ' ';
+	std::cout << std::endl;
 	
-	//std::cout << '@';
-	//ft::vector<int>::iterator it = b.begin();
-	/*for (ft::vector<int>::iterator it = b.begin() ; it != b.end(); ++it){
-    	//std::cout << ' ' << *it;
-		(void)*it;
-	}*/
+	int myints[] = {1776,7,4};(void)myints;
+	ft::vector<int> d;
+	ft::vector<int>::iterator it;
+	//it = c.begin() + 1;
+	//d.
 
 	return 0;
 }
