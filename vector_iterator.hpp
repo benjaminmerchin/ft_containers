@@ -5,55 +5,39 @@
 #include <iostream>
 #include <string>
 #include "vector.hpp"
+#include "RandomAccessIterator.hpp"
 
 namespace ft {
 
 template<typename T>
-class vector_iterator {
+class vector_iterator : public ft::RandomAccessIterator<T> {
 public:
 	typedef T value_type;
 	//typedef ft::vector::value_type value_type;
+	typedef std::forward_iterator_tag iterator_category;
+	typedef std::ptrdiff_t difference_type;
 	typedef value_type* pointer_type;
 	typedef value_type& reference_type;
+	typedef RandomAccessIterator<T> rai;
 
-	vector_iterator() : _pointer(NULL) {}
-	vector_iterator(value_type * ptr) : _pointer(ptr) {}
-	vector_iterator(vector_iterator const & src) : _pointer(src._pointer) {}
+	vector_iterator() : rai(NULL) {}
+	vector_iterator(value_type * ptr) : rai(ptr) {}
+	vector_iterator(vector_iterator const & src) : rai(src) {}
 	~vector_iterator() {}
 
-	vector_iterator & operator=(vector_iterator const & rhs) {_pointer = rhs._pointer;return *this;}
+	vector_iterator & operator=(vector_iterator const & rhs) {rai::_pointer = rhs._pointer;return *this;}
 
-	vector_iterator& operator++() {
-		_pointer++;
-		return *this;
-	}
+	vector_iterator& operator++() { rai::operator++(); return *this; }
+	vector_iterator operator++(int) { return rai::operator++(0); }
+	vector_iterator& operator--() { rai::operator--(); return *this; }
+	vector_iterator operator--(int) { return rai::operator--(0); }
 
-	vector_iterator operator++(int) {
-		vector_iterator iterator = *this;
-		++(*this);
-		return iterator;
-	}
+	value_type& operator[](int index) {return *(rai::_pointer + index);}
+	value_type* operator->() {return rai::_pointer;}
+	value_type& operator*() {return *rai::_pointer;}
 
-	vector_iterator& operator--() {
-		_pointer--;
-		return *this;
-	}
-
-	vector_iterator operator--(int) {
-		vector_iterator iterator = *this;
-		--(*this);
-		return iterator;
-	}
-
-	value_type& operator[](int index) {return *(_pointer + index);}
-	value_type* operator->() {return _pointer;}
-	value_type& operator*() {return *_pointer;}
-
-	bool operator==(const vector_iterator& other) const {return _pointer == other._pointer;}
+	bool operator==(const vector_iterator& other) const {return rai::_pointer == other._pointer;}
 	bool operator!=(const vector_iterator& other) const {return !(*this == other);}
-
-private:
-	value_type * _pointer;
 };
 
 template<typename T>

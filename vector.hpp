@@ -27,8 +27,6 @@ public:
 	typedef typename allocator_type::reference       reference;
 	typedef typename allocator_type::const_reference const_reference;
 	typedef vector_iterator<value_type>              iterator;
-	//typedef vector_iterator<vector<value_type> >      iterator;
-	//typedef typename allocator_traits<allocator_type>::pointer              iterator;
 	// typedef implementation-defined                   const_iterator;
 	typedef typename allocator_type::size_type       size_type;
 	typedef typename allocator_type::difference_type difference_type;
@@ -39,7 +37,6 @@ public:
 
 protected:
 	allocator_type _alloc_type; //ie:        std::allocator<T> _alloc_type; basically we store the Alloc which is a class
-	//std::allocator<T> _alloc_type;
 	pointer_type _array;
 	size_type _size;
 	size_type _capacity; //toujours une puissance de 2
@@ -50,10 +47,7 @@ public:
 	// default (1)
 	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {(void)alloc;std::cerr << "Default Allocator\n";}
 	// fill (2)
-	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
-		_size = n;
-		_capacity = n;
-		//_array = alloc(n * sizeof(value_type));
+	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _size(n), _capacity(n) {
 		_array = _alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
 			_array[i] = val;
@@ -73,6 +67,16 @@ public:
 		for (size_type i = 0; i < _size; i++)
 			_array[i] = x._array[i];
 		std::cerr << "Copy Allocator\n";
+	}
+	vector& operator= (const vector& x) {
+		if (_size < x._size) {
+			_alloc_type.deallocate(_array, _capacity);
+			_alloc_type.allocate(x._size);
+			_capacity = x._size;
+		}
+		_size = x._size;
+		for (size_type i = 0; i < _size; i++)
+			_array[i] = x._array[i];
 	}
 	~vector() {_alloc_type.deallocate(_array, _capacity);}
 
@@ -129,18 +133,94 @@ public:
 		_size++;
 	}
 	void pop_back() {_size--;}
-	// iterator insert (iterator position, const value_type& val);
-	// void insert (iterator position, size_type n, const value_type& val);
-	// template <class InputIterator>
-	// void insert (iterator position, InputIterator first, InputIterator last);
+	iterator insert (iterator position, const value_type& val) {
+		insert(position, 1, val);
+		return position;
+	}
+	void insert (iterator position, size_type n, const value_type& val) {
+		size_type pos = 0;
+		size_type until_end = 0;
+		iterator it = begin();
+		iterator aaa = begin();
+		--aaa;
+		std::cerr << "iciA ";
+		std::cout << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
+		for (; it != position; ++it) // risque de boucle sans fin si la position est avant begin
+			pos++;
+		std::cerr << "iciB ";
+		std::cout << "F " << &it[0] << " " << &position[0] << std::endl;
+		for (;it != end(); ++it)
+			until_end++;
+		if (_size + n > _capacity) { //on doit reallouer
+			pointer_type new_array = _alloc_type.allocate(_size + n);
+			size_type i = 0;
+			for (; i < pos; i++)
+				new_array[i] = _array[i];
+			for (; i < pos + n; i++)
+				new_array[i] = val;
+			for (; i < pos + n + until_end; i++)
+				new_array[i] = _array[i - n];
+			_alloc_type.deallocate(_array, _capacity);
+			_array = new_array;
+			_size += n;
+			_capacity = _size + n;
+		}
+		else { //pas besoin de reallouer
+			for (size_type i = 0; i < until_end; i++)
+				_array[_size + n - i] = _array[_size - i];
+			//_array[pos + until_end + n - i] = _array[pos + until_end - i]
+			for (size_type i = 0; i < n; i++)
+				_array[pos + i] = val;
+			_size += n;
+		}
+		//std::cerr << "ici";
+	}
+	template <class InputIterator>
+	void insert (iterator position, typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last) {
+		size_type pos = 0;
+		size_type until_end = 0;
+		size_type n = 0;
+		for (InputIterator it = first; it != last; ++it)
+			n++;
+		InputIterator it = begin();
+		for (; it != position; ++it)
+			pos++;
+		for (;it != end(); ++it)
+			until_end++;
+		if (_size + n > _capacity) { //on doit reallouer
+			pointer_type new_array = _alloc_type.allocate(_size + n);
+			size_type i = 0;
+			for (; i < pos; i++)
+				new_array[i] = _array[i];
+			for (; i < pos + n; i++, ++first)
+				new_array[i] = first;
+			for (; i < pos + n + until_end; i++)
+				new_array[i] = _array[i - n];
+			_alloc_type.deallocate(_array, _capacity);
+			_array = new_array;
+			_size += n;
+			_capacity = _size + n;
+		}
+		else { //pas besoin de reallouer
+			for (size_type i = 0; i < until_end; i++)
+				_array[_size + n - i] = _array[_size - i];
+			for (size_type i = 0; i < n; i++, ++first)
+				_array[pos + i] = first;
+			_size += n;
+		}
+	}
 	iterator erase(iterator position) {
 		for (size_type i = position; i < _size + 1; i++)
 			_array[i] = _array[i + 1];
 		_size--;
+		return position;
 	}
 	iterator erase(iterator first, iterator last) {
-		for (ft::vector<int>::iterator it = first ; it != last; ++it)
-    		std::cout << *it << ' ';
+		iterator last_cursor = last;
+		iterator end_cursor = end();
+		for (; first != last && first != end_cursor; ++first, ++last_cursor, --_size)
+			*first = *last_cursor;
+		return first;
 	}
 	void swap(vector& x) {ft::vector<value_type> temp(x); x = *this; *this = temp;}
 	void clear() {_size = 0;}
@@ -152,6 +232,7 @@ private:
 	void add_space(int n) {
 		if (n + _size <= _capacity) //no need to add space
 			return ;
+		size_type capacity_backup = _capacity;
 		if (_capacity == 0)
 			_capacity = 1;
 		while (n + _size > _capacity)
@@ -159,7 +240,7 @@ private:
 		pointer_type update = _alloc_type.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			update[i] = _array[i];
-		delete [] _array;
+		_alloc_type.deallocate(_array, capacity_backup);
 		_array = update;
 	}
 };
