@@ -50,6 +50,8 @@ int main(void) {
 
 	ft::vector<int> c(2, 3);
 	c.assign(7, 100);
+	ft::vector<int>::iterator iter = c.begin();
+	//ft::vector<int>::const_iterator iter = c.end();
 	for (unsigned int i = 0; i < c.size(); i++)
 		std::cout << c[i] << ' ';
 	std::cout << std::endl;
@@ -87,12 +89,12 @@ int main(void) {
 
 	myvector_2.insert (it,2,300);
 	std::cout << "D " << &it[0] << std::endl;
-	/*
 
 	// "it" no longer valid, get a new one:
 	it = myvector_2.begin();
 
 	ft::vector<int> anothervector (2,400);
+	/*
 	myvector_2.insert (it+2,anothervector.begin(),anothervector.end());
 
 	int myarray [] = { 501,502,503 };
@@ -106,3 +108,14 @@ int main(void) {
 
 	return 0;
 }
+
+/*
+./vector.hpp:185:17: error: no viable conversion from 'ft::vector<int, std::__1::allocator<int> >::iterator'
+      (aka 'vector_iterator<int>') to 'int'
+
+
+
+ft::vector<int, std::__1::allocator<int> >::iterator
+vector_iterator<int>
+int
+*/
