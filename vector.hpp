@@ -27,7 +27,7 @@ public:
 	typedef typename allocator_type::reference       reference;
 	typedef typename allocator_type::const_reference const_reference;
 	typedef vector_iterator<value_type>              iterator;
-	typedef const_vector_iterator<value_type>        const_iterator;
+	typedef vector_iterator<value_type const>        const_iterator;
 	typedef typename allocator_type::size_type       size_type;
 	typedef typename allocator_type::difference_type difference_type;
 	typedef typename allocator_type::pointer         pointer;
@@ -83,10 +83,10 @@ public:
 //ITERATORS
 // begin Return iterator to beginning (public member function )
 	iterator begin() {return iterator(_array);}
-	const_iterator begin() const {return iterator(_array);}
+	//const_iterator begin() const {return iterator(_array);}
 // end Return iterator to end (public member function )
 	iterator end() {return iterator(_array + _size);}
-	const_iterator end() const {return iterator(_array + _size);}
+	//const_iterator end() const {return iterator(_array + _size);}
 // rbegin Return reverse iterator to reverse beginning (public member function )
 // rend Return reverse iterator to reverse end (public member function )
 
@@ -144,11 +144,11 @@ public:
 		iterator aaa = begin();
 		--aaa;
 		std::cerr << "iciA ";
-		std::cout << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
+		std::cerr << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
 		for (; it != position; ++it) // risque de boucle sans fin si la position est avant begin
 			pos++;
 		std::cerr << "iciB ";
-		std::cout << "F " << &it[0] << " " << &position[0] << std::endl;
+		std::cerr << "F " << &it[0] << " " << &position[0] << std::endl;
 		for (;it != end(); ++it)
 			until_end++;
 		if (_size + n > _capacity) { //on doit reallouer

@@ -4,86 +4,85 @@
 #include <memory>
 #include <iostream>
 #include <string>
-#include "vector.hpp"
-#include "RandomAccessIterator.hpp"
 
 namespace ft {
 
 template<typename T>
-class vector_iterator : public ft::RandomAccessIterator<T> {
+class vector_iterator {
 public:
 	typedef T value_type;
 	typedef std::forward_iterator_tag iterator_category;
 	typedef ptrdiff_t difference_type;
-	typedef value_type* pointer_type;
-	typedef value_type& reference_type;
-	typedef RandomAccessIterator<T> rai;
+	typedef value_type* pointer;
+	typedef value_type& reference;
 
-	vector_iterator() : rai(NULL) {}
-	vector_iterator(value_type * ptr) : rai(ptr) {}
-	vector_iterator(vector_iterator const & src) : rai(src) {}
+	vector_iterator() : _pointer(NULL) {}
+	vector_iterator(value_type * ptr) : _pointer(ptr) {}
+	vector_iterator(vector_iterator const & src) : _pointer(src._pointer) {}
 	~vector_iterator() {}
-	vector_iterator & operator=(vector_iterator const & rhs) {rai::_pointer = rhs._pointer;return *this;}
+	vector_iterator & operator=(vector_iterator const & rhs) {_pointer = rhs._pointer; return *this;}
+	value_type * get_ptr(void) const {return _pointer;}
+	operator vector_iterator<value_type const>() const {return vector_iterator<value_type const>(_pointer);}
 
-	vector_iterator& operator++() { rai::operator++(); return *this; }
-	vector_iterator operator++(int) { return rai::operator++(0); }
-	vector_iterator& operator--() { rai::operator--(); return *this; }
-	vector_iterator operator--(int) { return rai::operator--(0); }
+protected:
+	value_type * _pointer;
 
-	value_type& operator[](int index) {return *(rai::_pointer + index);}
-	value_type* operator->() {return rai::_pointer;}
-	value_type& operator*() {return *rai::_pointer;}
-
-	bool operator==(const vector_iterator& other) const {return rai::operator==(other);}
-	bool operator!=(const vector_iterator& other) const {return rai::operator!=(other);}
-
-	friend vector_iterator<T> operator+(difference_type n, const vector_iterator<T>& rhs) {return rai::operator+(n, rhs);} //n + a
-	vector_iterator<T> operator+(difference_type n) const {return rai::operator+(n);} //a + n
-	vector_iterator<T> operator-(difference_type n) const {return rai::operator-(n);} //a - n
-	difference_type operator-(const vector_iterator<T>& rhs) const {return rai::operator-(rhs);} //a - b
-	vector_iterator<T> & operator-=(difference_type n) {rai::operator-=(n); return *this;}
-	vector_iterator<T> & operator+=(difference_type n) {rai::operator+=(n); return *this;}
-
-	friend std::ostream & operator<<(std::ostream & o, vector_iterator<T> & rhs) {return rai::operator<<(o, rhs);}
-};
-
-template<typename T>
-class const_vector_iterator : public ft::RandomAccessIterator<T> {
 public:
-	typedef T value_type;
-	typedef std::forward_iterator_tag iterator_category;
-	typedef ptrdiff_t difference_type;
-	typedef value_type* pointer_type;
-	typedef value_type& reference_type;
-	typedef RandomAccessIterator<T> rai;
+	vector_iterator& operator++() {
+		_pointer++;
+		return *this;
+	}
 
-	const_vector_iterator() : rai(NULL) {}
-	const_vector_iterator(value_type * ptr) : rai(ptr) {}
-	const_vector_iterator(const_vector_iterator const & src) : rai(src) {}
-	~const_vector_iterator() {}
-	const_vector_iterator & operator=(const_vector_iterator const & rhs) {rai::_pointer = rhs._pointer;return *this;}
+	vector_iterator operator++(int) {
+		vector_iterator it = *this;
+		++(*this);
+		return it;
+	}
 
-	const_vector_iterator& operator++() { rai::operator++(); return *this; }
-	const_vector_iterator operator++(int) { return rai::operator++(0); }
-	const_vector_iterator& operator--() { rai::operator--(); return *this; }
-	const_vector_iterator operator--(int) { return rai::operator--(0); }
+	vector_iterator& operator--() {
+		_pointer--;
+		return *this;
+	}
 
-	value_type& operator[](int index) const {return *(rai::_pointer + index);}
-	value_type* operator->() const {return rai::_pointer;}
-	value_type& operator*() const {return *rai::_pointer;}
+	vector_iterator operator--(int) {
+		vector_iterator it = *this;
+		--(*this);
+		return it;
+	}
 
-	bool operator==(const const_vector_iterator& other) const {return rai::operator==(other);}
-	bool operator!=(const const_vector_iterator& other) const {return rai::operator!=(other);}
+	value_type& operator[](int index) {return *(_pointer + index);}
+	value_type* operator->() {return _pointer;}
+	value_type& operator*() {return *_pointer;}
 
-	friend const_vector_iterator<T> operator+(difference_type n, const const_vector_iterator<T>& rhs) {return rai::operator+(n, rhs);} //n + a
-	const_vector_iterator<T> operator+(difference_type n) const {return rai::operator+(n);} //a + n
-	const_vector_iterator<T> operator-(difference_type n) const {return rai::operator-(n);} //a - n
-	difference_type operator-(const const_vector_iterator<T>& rhs) const {return rai::operator-(rhs);} //a - b
-	const_vector_iterator<T> & operator-=(difference_type n) {rai::operator-=(n); return *this;}
-	const_vector_iterator<T> & operator+=(difference_type n) {rai::operator+=(n); return *this;}
+	bool operator==(const vector_iterator& other) const {return _pointer == other._pointer;}
+	bool operator!=(const vector_iterator& other) const {return _pointer != other._pointer;}
+	bool operator<(const vector_iterator& other) const {return _pointer < other._pointer;}
+	bool operator<=(const vector_iterator& other) const {return _pointer <= other._pointer;}
+	bool operator>(const vector_iterator& other) const {return _pointer > other._pointer;}
+	bool operator>=(const vector_iterator& other) const {return _pointer >= other._pointer;}
 
-	friend std::ostream & operator<<(std::ostream & o, const_vector_iterator<T> & rhs) {return rai::operator<<(o, rhs);}
+	friend vector_iterator<T> operator+(difference_type n, const vector_iterator& rhs) {return n + rhs._pointer;} //n + a
+	vector_iterator<T> operator+(difference_type n) const {return _pointer + n;} //a + n
+	vector_iterator<T> operator-(difference_type n) const {return _pointer - n;} //a - n
+	difference_type operator-(const vector_iterator& rhs) const {return _pointer + rhs._pointer;} //a - b
+	vector_iterator<T> & operator+=(difference_type n) {_pointer += n; return *this;}
+	vector_iterator<T> & operator-=(difference_type n) {_pointer -= n; return *this;}
+
+	friend std::ostream & operator<<(std::ostream & o, vector_iterator<T> & rhs) {o << *rhs._pointer; return o;}
 };
+
+template<typename it1, typename it2>
+bool operator==(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() == b.get_ptr();}
+template<typename it1, typename it2>
+bool operator!=(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() != b.get_ptr();}
+template<typename it1, typename it2>
+bool operator<(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() < b.get_ptr();}
+template<typename it1, typename it2>
+bool operator<=(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() <= b.get_ptr();}
+template<typename it1, typename it2>
+bool operator>(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() > b.get_ptr();}
+template<typename it1, typename it2>
+bool operator>=(const vector_iterator<it1>& a, const vector_iterator<it2>& b) {return a.get_ptr() >= b.get_ptr();}
 
 }
 

@@ -80,7 +80,9 @@ int main(void) {
 	ft::vector<int> myvector_2 (3,100);
 	myvector_2.reserve(1000); // ERROR BETWEEN WITH THE ADDRESS OF it IF I REMOVE THIS
 	ft::vector<int>::iterator it;
-	//ft::vector<int> myvector_2; for (int i=1; i<=3; i++) myvector_2.push_back(i);
+	//ft::vector<int> myvector_2;
+	for (int i=1; i<=3; i++)
+		myvector_2.push_back(i);
 	std::cout << "A " << &it[0] << std::endl;
 	it = myvector_2.begin();
 	std::cout << "B " << &it[0] << std::endl;
@@ -91,9 +93,9 @@ int main(void) {
 	std::cout << "D " << &it[0] << std::endl;
 
 	// "it" no longer valid, get a new one:
-	it = myvector_2.begin();
+	it = myvector_2.begin() + 1;
 
-	ft::vector<int> anothervector (2,400);
+	//ft::vector<int> anothervector (a.begin(), a.end());
 	/*
 	myvector_2.insert (it+2,anothervector.begin(),anothervector.end());
 
