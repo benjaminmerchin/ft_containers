@@ -11,6 +11,43 @@ struct MyAlloc : std::allocator<type> {
 	}
 };
 
+void ft_insert() {
+	std::vector<int> myvector (3,100);
+	std::vector<int>::iterator it;
+
+	it = myvector.begin();
+	it = myvector.insert ( it , 200 );
+
+	myvector.insert (it,2,300);
+
+	// "it" no longer valid, get a new one:
+	it = myvector.begin();
+
+	std::vector<int> anothervector (2,400);
+	myvector.insert (it+2,anothervector.begin(),anothervector.end());
+
+	int myarray [] = { 501,502,503 };
+	myvector.insert (myvector.begin(), myarray, myarray+3);
+
+	std::cout << "myvector contains:";
+		for (it=myvector.begin(); it<myvector.end(); it++)
+	std::cout << ' ' << *it;
+	std::cout << '\n';
+}
+
+void ft_swap() {
+	int x=10, y=20;                              // x:10 y:20
+	std::swap(x,y);                              // x:20 y:10
+
+	std::vector<int> foo (4,x), bar (6,y);       // foo:4x20 bar:6x10
+	std::swap(foo,bar);                          // foo:6x10 bar:4x20
+
+	std::cout << "foo contains:";
+		for (std::vector<int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+	std::cout << ' ' << *it;
+	std::cout << '\n';
+}
+
 int main(void) {
 	std::vector<int/*, MyAlloc<int> */> a;
 	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
@@ -43,7 +80,7 @@ int main(void) {
 		std::cout << b[i] << ' ';
 	std::cout << std::endl;
 	for (ft::vector<int>::iterator it = b.begin() ; it != b.end(); ++it)
-    	std::cout << *it << ' ';
+		std::cout << *it << ' ';
 	std::cout << std::endl;
 
 	std::cout << "------------------\n";
@@ -81,8 +118,8 @@ int main(void) {
 	myvector_2.reserve(1000); // ERROR BETWEEN WITH THE ADDRESS OF it IF I REMOVE THIS
 	ft::vector<int>::iterator it;
 	//ft::vector<int> myvector_2;
-	for (int i=1; i<=3; i++)
-		myvector_2.push_back(i);
+	//for (int i=1; i<=3; i++)
+	//	myvector_2.push_back(i);
 	std::cout << "A " << &it[0] << std::endl;
 	it = myvector_2.begin();
 	std::cout << "B " << &it[0] << std::endl;
@@ -95,8 +132,7 @@ int main(void) {
 	// "it" no longer valid, get a new one:
 	it = myvector_2.begin() + 1;
 
-	//ft::vector<int> anothervector (a.begin(), a.end());
-	/*
+	ft::vector<int> anothervector (myvector_2.begin(), myvector_2.end());
 	myvector_2.insert (it+2,anothervector.begin(),anothervector.end());
 
 	int myarray [] = { 501,502,503 };
@@ -106,7 +142,15 @@ int main(void) {
 		for (it=myvector_2.begin(); it<myvector_2.end(); it++)
 	std::cout << ' ' << *it;
 	std::cout << '\n';
-	*/
+
+	ft_insert();
+	std::cerr << "myvector contains: 501 502 503 300 300 400 400 200 100 100 100" << std::endl;
+	ft_swap();
+	std::cerr << "foo contains: 10 10 10 10 10 10" << std::endl;
+
+
+	std::cerr << "is_integral w/ float: " << std::boolalpha << ft::is_integral<float>::value << std::endl; 
+	std::cerr << "is_integral w/ int: " << std::boolalpha << ft::is_integral<int>::value << std::endl;
 
 	return 0;
 }
@@ -115,9 +159,10 @@ int main(void) {
 ./vector.hpp:185:17: error: no viable conversion from 'ft::vector<int, std::__1::allocator<int> >::iterator'
       (aka 'vector_iterator<int>') to 'int'
 
-
-
 ft::vector<int, std::__1::allocator<int> >::iterator
 vector_iterator<int>
 int
+
+int                      aka ft::vector<int, std::__1::allocator<int> >::value_type
+ft::vector_iterator<int> aka typename ft::enable_if<!ft::is_integral<vector_iterator<int> >::value, vector_iterator<int> >::type
 */

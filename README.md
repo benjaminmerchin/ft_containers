@@ -42,31 +42,13 @@ todo constructors destructors
 Improvement testor:
 Even without configuration, the vector/ite_n0.cpp ite_n00.cpp ite_n1.cpp are correct
 
--->
+Vous devez réimplémenter 
+- iterators_traits
+- reverse_iterator
+- enable_if OK
+- is_integral OK
+- equal/lexicographicalcompare
+- std::pair
+- std::make_pair
 
-
-<!--
-vector/assign.cpp                  : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/at.cpp                      : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/at_const.cpp                : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/bidirect_it.cpp             : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/copy_construct.cpp          : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/erase.cpp                   : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/insert.cpp                  : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/insert2.cpp                 : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/ite.cpp                     : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/ite_arrow.cpp               : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/ite_eq_ope.cpp              : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/ite_n0.cpp                  : COMPILE: ✅ | RET: ✅ | OUT: ✅ | STD: [N]
-vector/ite_n00.cpp                 : COMPILE: ✅ | RET: ✅ | OUT: ✅ | STD: [N]
-vector/ite_n1.cpp                  : COMPILE: ✅ | RET: ✅ | OUT: ✅ | STD: [N]
-vector/push_pop.cpp                : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/relational_ope.cpp          : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/rev_ite_construct.cpp       : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/rite.cpp                    : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/rite2.cpp                   : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/rite_arrow.cpp              : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/rite_eq_ope.cpp             : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/size.cpp                    : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
-vector/swap.cpp                    : COMPILE: ❌ | RET: ❌ | OUT: ❌ | STD: [Y]
 -->

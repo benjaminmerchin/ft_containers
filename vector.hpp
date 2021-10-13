@@ -16,7 +16,7 @@
 namespace ft {
 
 template <class T, class Alloc = std::allocator<T> >
-class vector/* : public std::vector<T>*/ {
+class vector {
 
 public:
 	//list of the typedef required: https://cplusplus.com/reference/vector/vector/
@@ -56,7 +56,7 @@ public:
 	}
 	// range (3)
 	template <class InputIterator>
-	vector (typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
+	vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
 		for (InputIterator it = first; it != last; ++it)
 			push_back(*it);
 		std::cerr << "Range Allocator\n";
@@ -77,16 +77,17 @@ public:
 		_size = x._size;
 		for (size_type i = 0; i < _size; i++)
 			_array[i] = x._array[i];
+		return *this;
 	}
 	~vector() {_alloc_type.deallocate(_array, _capacity);}
 
 //ITERATORS
 // begin Return iterator to beginning (public member function )
 	iterator begin() {return iterator(_array);}
-	//const_iterator begin() const {return iterator(_array);}
+	const_iterator begin() const {return iterator(_array);}
 // end Return iterator to end (public member function )
 	iterator end() {return iterator(_array + _size);}
-	//const_iterator end() const {return iterator(_array + _size);}
+	const_iterator end() const {return iterator(_array + _size);}
 // rbegin Return reverse iterator to reverse beginning (public member function )
 // rend Return reverse iterator to reverse end (public member function )
 
@@ -116,7 +117,7 @@ public:
 
 //MODIFIERS
 	template <class InputIterator>
-	void assign (typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last) {
+	void assign (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) {
 		for (InputIterator it = first; it != last; ++it)
 			push_back(*it);
 	}
@@ -176,13 +177,13 @@ public:
 		//std::cerr << "ici";
 	}
 	template <class InputIterator>
-	void insert (iterator position, typename ft::enable_if<!ft::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last) {
+	void insert (iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) {
 		size_type pos = 0;
 		size_type until_end = 0;
 		size_type n = 0;
 		for (InputIterator it = first; it != last; ++it)
 			n++;
-		InputIterator it = begin();
+		iterator it = begin();
 		for (; it != position; ++it)
 			pos++;
 		for (;it != end(); ++it)
@@ -193,7 +194,7 @@ public:
 			for (; i < pos; i++)
 				new_array[i] = _array[i];
 			for (; i < pos + n; i++, ++first)
-				new_array[i] = first;
+				new_array[i] = *first;
 			for (; i < pos + n + until_end; i++)
 				new_array[i] = _array[i - n];
 			_alloc_type.deallocate(_array, _capacity);
@@ -205,7 +206,7 @@ public:
 			for (size_type i = 0; i < until_end; i++)
 				_array[_size + n - i] = _array[_size - i];
 			for (size_type i = 0; i < n; i++, ++first)
-				_array[pos + i] = first;
+				_array[pos + i] = *first;
 			_size += n;
 		}
 	}

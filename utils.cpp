@@ -2,57 +2,89 @@
 
 namespace ft {
 
+//https://en.cppreference.com/w/cpp/types/enable_if
 template<bool B, class T = void>
 struct enable_if {};
+
 template<class T>
 struct enable_if<true, T> { typedef T type; };
 
-//https://en.cppreference.com/w/cpp/types/numeric_limits/is_integer
-template<typename T>
-struct numeric_limits { bool is_integer() {return false;} };
+//https://www.cplusplus.com/reference/type_traits/is_integral/
+template<class T>
+struct is_integral { const static bool value = false; };
 
 template<>
-struct numeric_limits<bool> { bool is_integer() {return true;} };
+struct is_integral<bool> { const static bool value = true; };
 template<>
-struct numeric_limits<char> { bool is_integer() {return true;} };
+struct is_integral<char> { const static bool value = true; };
 template<>
-struct numeric_limits<signed char> { bool is_integer() {return true;} };
+struct is_integral<char16_t> { const static bool value = true; };
 template<>
-struct numeric_limits<unsigned char> { bool is_integer() {return true;} };
+struct is_integral<char32_t> { const static bool value = true; };
 template<>
-struct numeric_limits<int> { bool is_integer() {return true;} };
+struct is_integral<wchar_t> { const static bool value = true; };
 template<>
-struct numeric_limits<unsigned int> { bool is_integer() {return true;} };
+struct is_integral<signed char> { const static bool value = true; };
 template<>
-struct numeric_limits<long> { bool is_integer() {return true;} };
+struct is_integral<short int> { const static bool value = true; };
 template<>
-struct numeric_limits<unsigned long> { bool is_integer() {return true;} };
+struct is_integral<int> { const static bool value = true; };
 template<>
-struct numeric_limits<float> { bool is_integer() {return false;} };
+struct is_integral<long int> { const static bool value = true; };
 template<>
-struct numeric_limits<double> { bool is_integer() {return false;} };
+struct is_integral<long long int> { const static bool value = true; };
 template<>
-struct numeric_limits<long double> { bool is_integer() {return false;} };
-
-}
+struct is_integral<unsigned char> { const static bool value = true; };
+template<>
+struct is_integral<unsigned short int> { const static bool value = true; };
+template<>
+struct is_integral<unsigned int> { const static bool value = true; };
+template<>
+struct is_integral<unsigned long int> { const static bool value = true; };
+template<>
+struct is_integral<unsigned long long int> { const static bool value = true; };
 
 //typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first
 //std::numeric_limits<InputIterator>::is_integer, InputIterator>
 //std::numeric_limits<int>::is_integer, int> -> true
 //std::numeric_limits<float>::is_integer, float> -> false
 
-/* non-specialized *//*	false
-bool	true
-char	true
-signed char	true
-unsigned char	true
-wchar_t	true
-short	true
-unsigned short	true
-int	true
-unsigned int	true
-long	true
-unsigned long	true
-float	false
-double	false
-long double	false*/
+//https://www.cplusplus.com/reference/iterator/iterator_traits/
+template <typename Iterator>
+class iterator_traits {
+	public:
+		typedef typename Iterator::difference_type difference_type;
+		typedef typename Iterator::value_type value_type;
+		typedef typename Iterator::pointer pointer;
+		typedef typename Iterator::reference reference;
+		typedef typename Iterator::iterator_category iterator_category;
+};
+
+template <typename T>
+class iterator_traits <T *> {
+	public:
+		typedef ptrdiff_t difference_type;
+		typedef T value_type;
+		typedef T* pointer;
+		typedef T& reference;
+		typedef std::random_access_iterator_tag iterator_category;
+};
+
+template <typename T>
+class iterator_traits <const T *> {
+	public:
+		typedef ptrdiff_t difference_type;
+		typedef T value_type;
+		typedef const T* pointer;
+		typedef const T& reference;
+		typedef std::random_access_iterator_tag iterator_category;
+};
+
+// member             generic definition           T* specialization            const T* specialization
+// difference_type    Iterator::difference_type    ptrdiff_t                    ptrdiff_t
+// value_type         Iterator::value_type         T                            T
+// pointer            Iterator::pointer            T*                           const T*
+// reference          Iterator::reference          T&                           const T&
+// iterator_category  Iterator::iterator_category  random_access_iterator_tag   random_access_iterator_tag
+}
+
