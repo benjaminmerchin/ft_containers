@@ -6,7 +6,8 @@
 #include <string>
 //#include <vector>
 #include "vector_iterator.hpp"
-#include "utils.cpp"
+#include "reverse_iterator.hpp"
+#include "utils.hpp"
 
 //https://en.cppreference.com/w/cpp/header/vector copier le header class template
 //iterators_traits, reverse_iterator, enable_if, is_integral, equal/lexicographical compare, std::pair, std::make_pair, must be reimplemented.
@@ -32,8 +33,8 @@ public:
 	typedef typename allocator_type::difference_type difference_type;
 	typedef typename allocator_type::pointer         pointer;
 	typedef typename allocator_type::const_pointer   const_pointer;
-	// typedef std::reverse_iterator<iterator>          reverse_iterator;
-	// typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
+	typedef reverse_iterator<value_type>             reverse_iterator;
+//	typedef reverse_iterator<value_type const>       const_reverse_iterator;
 
 protected:
 	allocator_type _alloc_type; //ie:        std::allocator<T> _alloc_type; basically we store the Alloc which is a class
@@ -45,13 +46,13 @@ public:
 //MEMBER FUNCTIONS
 	// 4 constructors required: default/fill/range/copy
 	// default (1)
-	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {(void)alloc;std::cerr << "Default Allocator\n";}
+	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {}
 	// fill (2)
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _size(n), _capacity(n) {
 		_array = _alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
 			_array[i] = val;
-		std::cerr << "Fill Allocator\n";
+		//std::cerr << "Fill Allocator\n";
 		//std::cerr << val << std::endl;
 	}
 	// range (3)
@@ -59,14 +60,14 @@ public:
 	vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
 		for (InputIterator it = first; it != last; ++it)
 			push_back(*it);
-		std::cerr << "Range Allocator\n";
+		//std::cerr << "Range Allocator\n";
 	}
 	// copy (4)
 	vector (const vector& x) : _alloc_type(x._alloc_type), _size(x._size), _capacity(x._capacity) {
 		_array = _alloc_type.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			_array[i] = x._array[i];
-		std::cerr << "Copy Allocator\n";
+		//std::cerr << "Copy Allocator\n";
 	}
 	vector& operator= (const vector& x) {
 		if (_size < x._size) {
@@ -108,8 +109,16 @@ public:
 //ELEMENT ACCESS
 	reference operator[] (size_type n) {return _array[n];}
 	const_reference operator[] (size_type n) const {return _array[n];}
-	reference at (size_type n) {return _array[n];}
-	const_reference at (size_type n) const {return _array[n];}
+	reference at (size_type n) {
+		if (n >= _size)
+			throw std::out_of_range("out of range");
+		return _array[n];
+	}
+	const_reference at (size_type n) const {
+		if (n >= _size)
+			throw std::out_of_range("out of range");
+		return _array[n];
+	}
 	reference front() {return _array[0];}
 	const_reference front() const {return _array[0];}
 	reference back() {return _array[_size - 1];}
@@ -130,8 +139,7 @@ public:
 	void push_back(const value_type& val) {
 		if (_size == _capacity) //size is always lower (enough space) or equal
 			add_space(1);
-		_array[_size] = val;
-		_size++;
+		_array[_size++] = val;
 	}
 	void pop_back() {_size--;}
 	iterator insert (iterator position, const value_type& val) {
@@ -144,12 +152,12 @@ public:
 		iterator it = begin();
 		iterator aaa = begin();
 		--aaa;
-		std::cerr << "iciA ";
-		std::cerr << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
+		//std::cerr << "iciA ";
+		//std::cerr << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
 		for (; it != position; ++it) // risque de boucle sans fin si la position est avant begin
 			pos++;
-		std::cerr << "iciB ";
-		std::cerr << "F " << &it[0] << " " << &position[0] << std::endl;
+		//std::cerr << "iciB ";
+		//std::cerr << "F " << &it[0] << " " << &position[0] << std::endl;
 		for (;it != end(); ++it)
 			until_end++;
 		if (_size + n > _capacity) { //on doit reallouer

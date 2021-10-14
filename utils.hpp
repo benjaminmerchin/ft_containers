@@ -1,3 +1,6 @@
+#ifndef UTILS_HPP
+#define UTILS_HPP
+
 #include <iostream>
 
 namespace ft {
@@ -88,3 +91,4 @@ class iterator_traits <const T *> {
 // iterator_category  Iterator::iterator_category  random_access_iterator_tag   random_access_iterator_tag
 }
 
+#endif

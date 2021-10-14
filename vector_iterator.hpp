@@ -64,7 +64,7 @@ public:
 	friend vector_iterator<T> operator+(difference_type n, const vector_iterator& rhs) {return n + rhs._pointer;} //n + a
 	vector_iterator<T> operator+(difference_type n) const {return _pointer + n;} //a + n
 	vector_iterator<T> operator-(difference_type n) const {return _pointer - n;} //a - n
-	difference_type operator-(const vector_iterator& rhs) const {return _pointer + rhs._pointer;} //a - b
+	difference_type operator-(const vector_iterator& rhs) const {return _pointer - rhs._pointer;} //a - b
 	vector_iterator<T> & operator+=(difference_type n) {_pointer += n; return *this;}
 	vector_iterator<T> & operator-=(difference_type n) {_pointer -= n; return *this;}
 
