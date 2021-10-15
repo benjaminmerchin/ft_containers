@@ -4,9 +4,8 @@
 #include <memory>
 #include <iostream>
 #include <string>
-//#include <vector>
 #include "vector_iterator.hpp"
-#include "reverse_iterator.hpp"
+#include "reverse_it.hpp"
 #include "utils.hpp"
 
 //https://en.cppreference.com/w/cpp/header/vector copier le header class template
@@ -33,8 +32,8 @@ public:
 	typedef typename allocator_type::difference_type difference_type;
 	typedef typename allocator_type::pointer         pointer;
 	typedef typename allocator_type::const_pointer   const_pointer;
-	typedef reverse_iterator<value_type>             reverse_iterator;
-//	typedef reverse_iterator<value_type const>       const_reverse_iterator;
+	typedef reverse_it<iterator>                     reverse_iterator;
+	typedef reverse_it<const_iterator>               const_reverse_iterator;
 
 protected:
 	allocator_type _alloc_type; //ie:        std::allocator<T> _alloc_type; basically we store the Alloc which is a class
@@ -85,12 +84,16 @@ public:
 //ITERATORS
 // begin Return iterator to beginning (public member function )
 	iterator begin() {return iterator(_array);}
-	const_iterator begin() const {return iterator(_array);}
+	const_iterator begin() const {return const_iterator(_array);}
 // end Return iterator to end (public member function )
 	iterator end() {return iterator(_array + _size);}
-	const_iterator end() const {return iterator(_array + _size);}
+	const_iterator end() const {return const_iterator(_array + _size);}
 // rbegin Return reverse iterator to reverse beginning (public member function )
+	reverse_iterator rbegin() {return reverse_iterator(_array + _size);}
+	const_reverse_iterator rbegin() const {return const_reverse_iterator(_array + _size);}
 // rend Return reverse iterator to reverse end (public member function )
+	reverse_iterator rend() {return reverse_iterator(_array);}
+	const_reverse_iterator rend() const {return const_reverse_iterator(_array);}
 
 //CAPACITY
 	size_type size() const {return _size;}
@@ -152,12 +155,8 @@ public:
 		iterator it = begin();
 		iterator aaa = begin();
 		--aaa;
-		//std::cerr << "iciA ";
-		//std::cerr << "E " << &it[0] << " " << &aaa[0] << " " << &position[0] << std::endl;
-		for (; it != position; ++it) // risque de boucle sans fin si la position est avant begin
+		for (; it != position; ++it)
 			pos++;
-		//std::cerr << "iciB ";
-		//std::cerr << "F " << &it[0] << " " << &position[0] << std::endl;
 		for (;it != end(); ++it)
 			until_end++;
 		if (_size + n > _capacity) { //on doit reallouer
@@ -257,9 +256,9 @@ private:
 //NON-MEMBER FUNCTION OVERLOADS
 	template <class T, class Alloc>
 	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		if (lhs._size != rhs._size)
+		if (lhs.size() != rhs.size())
 			return false;
-		for (int i = 0; i < lhs._size; i++)
+		for (size_t i = 0; i < lhs.size(); i++)
 			if (lhs[i] != rhs[i])
 				return false;
 		return true;
@@ -268,8 +267,8 @@ private:
 	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return !(lhs == rhs);}
 	template <class T, class Alloc>
 	bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		int i = 0;
-		while (i < lhs._size) {
+		size_t i = 0;
+		while (i < lhs.size()) {
 			if (lhs[i] < rhs[i])
 				return true;
 			if (lhs[i] > rhs[i])

@@ -48,6 +48,104 @@ void ft_swap() {
 	std::cout << '\n';
 }
 
+void ft_reverse_iterator() {
+	std::vector<int> myvector;
+		for (int i=0; i<10; i++) myvector.push_back(i);
+
+	typedef std::vector<int>::iterator iter_type;
+															// ? 0 1 2 3 4 5 6 7 8 9 ?
+	iter_type from (myvector.begin());                     //   ^
+															//         ------>
+	iter_type until (myvector.end());                      //                       ^
+															//
+	std::reverse_iterator<iter_type> rev_until (from);     // ^
+															//         <------
+	std::reverse_iterator<iter_type> rev_from (until);     //                     ^
+
+	std::cout << "myvector:";
+	while (rev_from != rev_until)
+		std::cout << ' ' << *rev_from++;
+	std::cout << '\n';	
+}
+
+void ft_reverse_iterator_2() {
+	std::vector<int> myvector;
+	for (int i=0; i<10; i++) myvector.push_back(i);	// myvector: 0 1 2 3 4 5 6 7 8 9
+
+	typedef std::vector<int>::iterator iter_type;
+
+	std::reverse_iterator<iter_type> rev_iterator = myvector.rend();
+
+	rev_iterator -= 4;
+
+	std::cout << "rev_iterator now points to: " << *rev_iterator << '\n';
+}
+
+void ft_reverse_iterator_3() {
+	std::vector<int> myvector;
+	for (int i=0; i<10; i++) myvector.push_back(i);	// myvector: 0 1 2 3 4 5 6 7 8 9
+
+	typedef std::vector<int>::iterator iter_type;
+
+	std::reverse_iterator<iter_type> rev_iterator;
+
+	rev_iterator = myvector.rend() - 3;
+
+	std::cout << "myvector.rend()-3 points to: " << *rev_iterator << '\n';
+}
+
+void ft_reverse_iterator_relational_operator() {
+	std::vector<int> myvector;
+	for (int i=0; i<10; i++) myvector.push_back(i);
+
+	typedef std::vector<int>::iterator iter_type;
+														// ? 9 8 7 6 5 4 3 2 1 0 ?
+	iter_type from (myvector.begin());                     //   ^
+														//         ------>
+	iter_type until (myvector.end());                      //                       ^
+														//
+	std::reverse_iterator<iter_type> rev_until (from);     // ^
+														//         <------
+	std::reverse_iterator<iter_type> rev_from (until);     //                     ^
+
+	std::cout << "myvector:";
+	while (rev_from != rev_until)
+		std::cout << ' ' << *rev_from++;
+	//std::cout << '\n';
+
+	std::reverse_iterator<iter_type> rev_it;
+	rev_it = 3 + myvector.rbegin();
+
+	std::cout << " - 4th elem: " << *rev_it << '\n';
+}
+
+void ft_reserve() {
+	std::vector<int>::size_type sz;
+
+	std::vector<int> foo;
+	sz = foo.capacity();
+	std::cout << "making foo grow:\n";
+	for (int i=0; i<100; ++i) {
+		foo.push_back(i);
+		if (sz!=foo.capacity()) {
+			sz = foo.capacity();
+			std::cout << "capacity changed: " << sz << '\n';
+		}
+	}
+
+	std::vector<int> bar;
+	sz = bar.capacity();
+	bar.reserve(100);   // this is the only difference with foo above
+	std::cout << "making bar grow:\n";
+	for (int i=0; i<100; ++i) {
+		bar.push_back(i);
+		if (sz!=bar.capacity()) {
+			sz = bar.capacity();
+			std::cout << "capacity changed: " << sz << '\n';
+		}
+	}
+}
+
 int main(void) {
 	std::vector<int/*, MyAlloc<int> */> a;
 	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
@@ -152,17 +250,17 @@ int main(void) {
 	std::cerr << "is_integral w/ float: " << std::boolalpha << ft::is_integral<float>::value << std::endl; 
 	std::cerr << "is_integral w/ int: " << std::boolalpha << ft::is_integral<int>::value << std::endl;
 
+	ft_reverse_iterator();
+	std::cerr << "myvector: 9 8 7 6 5 4 3 2 1 0" << std::endl;
+	ft_reverse_iterator_2();
+	std::cerr << "rev_iterator now points to: 3" << std::endl;
+	ft_reverse_iterator_3();
+	std::cerr << "myvector.rend()-3 points to: 2" << std::endl;
+	ft_reverse_iterator_relational_operator();
+	std::cerr << "myvector: 9 8 7 6 5 4 3 2 1 0 - 4th elem: 6" << std::endl;
+	ft_reserve();
+	
+
+
 	return 0;
 }
-
-/*
-./vector.hpp:185:17: error: no viable conversion from 'ft::vector<int, std::__1::allocator<int> >::iterator'
-      (aka 'vector_iterator<int>') to 'int'
-
-ft::vector<int, std::__1::allocator<int> >::iterator
-vector_iterator<int>
-int
-
-int                      aka ft::vector<int, std::__1::allocator<int> >::value_type
-ft::vector_iterator<int> aka typename ft::enable_if<!ft::is_integral<vector_iterator<int> >::value, vector_iterator<int> >::type
-*/

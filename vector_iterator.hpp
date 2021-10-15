@@ -11,7 +11,7 @@ template<typename T>
 class vector_iterator {
 public:
 	typedef T value_type;
-	typedef std::forward_iterator_tag iterator_category;
+	typedef std::random_access_iterator_tag iterator_category;
 	typedef ptrdiff_t difference_type;
 	typedef value_type* pointer;
 	typedef value_type& reference;
