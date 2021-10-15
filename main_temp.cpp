@@ -146,6 +146,36 @@ void ft_reserve() {
 	}
 }
 
+void ft_swap_mli() {
+	ft::vector<int> foo(3, 15);
+	ft::vector<int> bar(5, 42);
+	ft::vector<int>::const_iterator it_foo = foo.begin();
+	ft::vector<int>::const_iterator it_bar = bar.begin();
+
+	std::cout << "BEFORE SWAP" << std::endl;
+
+	std::cout << "foo contains:" << std::endl;
+	//printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	//printSize(bar);
+
+	foo.swap(bar);
+	/*
+
+	std::cout << "AFTER SWAP" << std::endl;
+
+	std::cout << "foo contains:" << std::endl;
+	//printSize(foo);
+	std::cout << "bar contains:" << std::endl;
+	//printSize(bar);
+
+	std::cout << "Iterator validity:" << std::endl;
+	std::cout << (it_foo == bar.begin()) << std::endl;
+	std::cout << (it_bar == foo.begin()) << std::endl;
+	*/
+
+}
+
 int main(void) {
 	std::vector<int/*, MyAlloc<int> */> a;
 	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
@@ -260,7 +290,7 @@ int main(void) {
 	std::cerr << "myvector: 9 8 7 6 5 4 3 2 1 0 - 4th elem: 6" << std::endl;
 	ft_reserve();
 	
-
+	ft_swap_mli();
 
 	return 0;
 }

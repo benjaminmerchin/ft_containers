@@ -230,7 +230,20 @@ public:
 			*first = *last_cursor;
 		return first;
 	}
-	void swap(vector& x) {ft::vector<value_type> temp(x); x = *this; *this = temp;}
+	void swap(vector& x) {
+		allocator_type temp_alloc_type = x._alloc_type;
+		pointer_type temp_array = x._array;
+		size_type temp_size = x._size;
+		size_type temp_capacity = x._capacity;
+		x._alloc_type = _alloc_type;
+		x._array = _array;
+		x._size = _size;
+		x._capacity = _capacity;
+		_alloc_type = temp_alloc_type;
+		_array = temp_array;
+		_size = temp_size;
+		_capacity = temp_capacity;
+	}
 	void clear() {_size = 0;}
 
 //ALLOCATOR
