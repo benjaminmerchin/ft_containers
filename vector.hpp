@@ -238,7 +238,7 @@ public:
 
 private:
 	void add_space(int n) {
-		if (n + _size <= _capacity) //no need to add space
+		if (n + _size <= _capacity || n < 0) //no need to add space
 			return ;
 		size_type capacity_backup = _capacity;
 		if (_capacity == 0)

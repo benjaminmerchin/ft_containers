@@ -43,12 +43,16 @@ Improvement testor:
 Even without configuration, the vector/ite_n0.cpp ite_n00.cpp ite_n1.cpp are correct
 
 Vous devez réimplémenter 
-- iterators_traits
-- reverse_iterator
+- iterators_traits OK
+- reverse_iterator OK
 - enable_if OK
 - is_integral OK
-- equal/lexicographicalcompare
+- equal/lexicographicalcompare OK
 - std::pair
 - std::make_pair
+
+Sur le testeur de Mli
+en rouge c'est le testeur
+en vert c'est moi
 
 -->

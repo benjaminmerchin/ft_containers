@@ -55,7 +55,7 @@ public:
 	}
 
 	value_type& operator[](int index) {return *(_pointer - index - 1);}
-	value_type* operator->() {return _pointer;}
+	value_type* operator->() {return &(operator*());}
 	value_type& operator*() {return *_pointer;}
 
 	bool operator==(const reverse_it& other) const {return _pointer == other._pointer;}
