@@ -183,7 +183,7 @@ void ft_test() {
 	ft::vector<int>::const_reverse_iterator ite(vct.rend());
 
 	for (int i = 1, j = 0; it != ite /*&& j < 10*/; ++i, ++j) {
-		*it++ = (i * 7);
+		*it-- = (i * 7);
 		std::cout << ">> " << &(*it) << "    " << &(*ite) << std::endl;
 	}
 	//printSize(vct, 1);
@@ -344,8 +344,24 @@ void test_list() {
 }
 
 int main() {
-	//test_list();
+	test_list();
 
-	ft_test();
+	//ft_test();
+
+	ft::vector<int> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(5);
+	ft::vector<int>::iterator it_b = v.begin();
+	ft::vector<int>::iterator it_e = v.end();
+	ft::vector<int>::reverse_iterator rit_b = v.rbegin();
+	ft::vector<int>::reverse_iterator rit_e = v.rend();
+	//ft::reverse_iterator<ft::vector<int>::iterator> rit_b2;
+	std::cout << ">> " << &(*it_b++) << "    " << &(*it_e++) << "    " << &(*rit_b++) << "    " << &(*rit_e++) << std::endl;
+	//std::cout << ">> " << &(*it_b++) << "    " << &(*it_e++) << "    " << &(*rit_b++) << "    " << &(*rit_e++) << std::endl;
+	std::cout << ">> " << &(*it_b) << "    " << &(*it_e) << "    " << &(*rit_b) << "    " << &(*rit_e) << std::endl;
+
 	return 0;
 }

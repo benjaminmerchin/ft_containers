@@ -51,6 +51,7 @@ public:
 	reverse_it operator--(int) {
 		reverse_it it = *this;
 		++(*this);
+		//std::cerr << 'a';
 		return it;
 	}
 

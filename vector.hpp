@@ -89,11 +89,11 @@ public:
 	iterator end() {return iterator(_array + _size);}
 	const_iterator end() const {return const_iterator(_array + _size);}
 // rbegin Return reverse iterator to reverse beginning (public member function )
-	reverse_iterator rbegin() {return reverse_iterator(_array + _size);}
-	const_reverse_iterator rbegin() const {return const_reverse_iterator(_array + _size);}
+	reverse_iterator rbegin() {return reverse_iterator(end());}
+	const_reverse_iterator rbegin() const {return const_reverse_iterator(end());}
 // rend Return reverse iterator to reverse end (public member function )
-	reverse_iterator rend() {return reverse_iterator(_array);}
-	const_reverse_iterator rend() const {return const_reverse_iterator(_array);}
+	reverse_iterator rend() {return reverse_iterator(begin());}
+	const_reverse_iterator rend() const {return const_reverse_iterator(begin());}
 
 //CAPACITY
 	size_type size() const {return _size;}
