@@ -271,24 +271,13 @@ private:
 	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 		if (lhs.size() != rhs.size())
 			return false;
-		for (size_t i = 0; i < lhs.size(); i++)
-			if (lhs[i] != rhs[i])
-				return false;
-		return true;
+		return equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 	template <class T, class Alloc>
 	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return !(lhs == rhs);}
 	template <class T, class Alloc>
 	bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		size_t i = 0;
-		while (i < lhs.size()) {
-			if (lhs[i] < rhs[i])
-				return true;
-			if (lhs[i] > rhs[i])
-				return false;
-			i++;
-		}
-		return false;
+		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 	template <class T, class Alloc>
 	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {return (lhs < rhs || lhs == rhs);}

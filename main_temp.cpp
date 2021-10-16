@@ -54,13 +54,13 @@ void ft_reverse_iterator() {
 
 	typedef std::vector<int>::iterator iter_type;
 															// ? 0 1 2 3 4 5 6 7 8 9 ?
-	iter_type from (myvector.begin());                     //   ^
+	iter_type from (myvector.begin());                      //   ^
 															//         ------>
-	iter_type until (myvector.end());                      //                       ^
+	iter_type until (myvector.end());                       //                       ^
 															//
-	std::reverse_iterator<iter_type> rev_until (from);     // ^
+	std::reverse_iterator<iter_type> rev_until (from);      // ^
 															//         <------
-	std::reverse_iterator<iter_type> rev_from (until);     //                     ^
+	std::reverse_iterator<iter_type> rev_from (until);      //                     ^
 
 	std::cout << "myvector:";
 	while (rev_from != rev_until)
@@ -100,13 +100,13 @@ void ft_reverse_iterator_relational_operator() {
 
 	typedef std::vector<int>::iterator iter_type;
 														// ? 9 8 7 6 5 4 3 2 1 0 ?
-	iter_type from (myvector.begin());                     //   ^
+	iter_type from (myvector.begin());                  //   ^
 														//         ------>
-	iter_type until (myvector.end());                      //                       ^
+	iter_type until (myvector.end());                   //                       ^
 														//
-	std::reverse_iterator<iter_type> rev_until (from);     // ^
+	std::reverse_iterator<iter_type> rev_until (from);  // ^
 														//         <------
-	std::reverse_iterator<iter_type> rev_from (until);     //                     ^
+	std::reverse_iterator<iter_type> rev_from (until);  //                     ^
 
 	std::cout << "myvector:";
 	while (rev_from != rev_until)
@@ -146,37 +146,81 @@ void ft_reserve() {
 	}
 }
 
-void ft_swap_mli() {
-	ft::vector<int> foo(3, 15);
-	ft::vector<int> bar(5, 42);
-	ft::vector<int>::const_iterator it_foo = foo.begin();
-	ft::vector<int>::const_iterator it_bar = bar.begin();
+void ft_rbegin() {
+	std::vector<int> myvector (5);  // 5 default-constructed ints
 
-	std::cout << "BEFORE SWAP" << std::endl;
+	int i=0;
 
-	std::cout << "foo contains:" << std::endl;
-	//printSize(foo);
-	std::cout << "bar contains:" << std::endl;
-	//printSize(bar);
+	std::vector<int>::reverse_iterator rit = myvector.rbegin();
+	for (; rit!= myvector.rend(); ++rit)
+		*rit = ++i;
 
-	foo.swap(bar);
-	/*
-
-	std::cout << "AFTER SWAP" << std::endl;
-
-	std::cout << "foo contains:" << std::endl;
-	//printSize(foo);
-	std::cout << "bar contains:" << std::endl;
-	//printSize(bar);
-
-	std::cout << "Iterator validity:" << std::endl;
-	std::cout << (it_foo == bar.begin()) << std::endl;
-	std::cout << (it_bar == foo.begin()) << std::endl;
-	*/
-
+	std::cout << "myvector contains:";
+	for (std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << '\n';
 }
 
-int main(void) {
+void ft_rend() {
+	std::vector<int> myvector (5);  // 5 default-constructed ints
+
+	std::vector<int>::reverse_iterator rit = myvector.rbegin();
+
+	int i=0;
+	for (rit = myvector.rbegin(); rit!= myvector.rend(); ++rit)
+		*rit = ++i;
+
+	std::cout << "myvector contains:";
+	for (std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << '\n';
+}
+
+void ft_test() {
+	const int size = 5;
+	ft::vector<int> vct(size);
+	ft::vector<int>::reverse_iterator it(vct.rbegin());
+	ft::vector<int>::const_reverse_iterator ite(vct.rend());
+
+	for (int i = 1, j = 0; it != ite /*&& j < 10*/; ++i, ++j) {
+		*it++ = (i * 7);
+		std::cout << ">> " << &(*it) << "    " << &(*ite) << std::endl;
+	}
+	//printSize(vct, 1);
+
+	it = vct.rbegin();
+	ite = vct.rbegin();
+
+	std::cout << *(++ite) << std::endl;
+	std::cout << *(ite++) << std::endl;
+	std::cout << *ite++ << std::endl;
+	std::cout << *++ite << std::endl;
+
+	//it->m();
+	////ite->m();
+
+	std::cout << *(++it) << std::endl;
+	std::cout << *(it++) << std::endl;
+	std::cout << *it++ << std::endl;
+	std::cout << *++it << std::endl;
+
+	std::cout << *(--ite) << std::endl;
+	std::cout << *(ite--) << std::endl;
+	std::cout << *--ite << std::endl;
+	std::cout << *ite-- << std::endl;
+
+	//(*it).m();
+	//(*ite).m();
+
+	std::cout << *(--it) << std::endl;
+	std::cout << *(it--) << std::endl;
+	std::cout << *it-- << std::endl;
+	std::cout << *--it << std::endl;
+	/*
+	*/
+}
+
+void basic_tests() {
 	std::vector<int/*, MyAlloc<int> */> a;
 	std::cout << "size:" << a.size() << "\tcapacity:" << a.capacity() << "\tmax_size:" << a.max_size() << std::endl;
 	a.push_back(time(0)%3);
@@ -270,6 +314,10 @@ int main(void) {
 		for (it=myvector_2.begin(); it<myvector_2.end(); it++)
 	std::cout << ' ' << *it;
 	std::cout << '\n';
+}
+
+void test_list() {
+	basic_tests();
 
 	ft_insert();
 	std::cerr << "myvector contains: 501 502 503 300 300 400 400 200 100 100 100" << std::endl;
@@ -289,8 +337,15 @@ int main(void) {
 	ft_reverse_iterator_relational_operator();
 	std::cerr << "myvector: 9 8 7 6 5 4 3 2 1 0 - 4th elem: 6" << std::endl;
 	ft_reserve();
-	
-	ft_swap_mli();
+	ft_rbegin();
+	std::cerr << "myvector contains: 5 4 3 2 1" << std::endl;
+	ft_rend();
+	std::cerr << "myvector contains: 5 4 3 2 1 " << std::endl;
+}
 
+int main() {
+	//test_list();
+
+	ft_test();
 	return 0;
 }
