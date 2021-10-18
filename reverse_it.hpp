@@ -21,7 +21,8 @@ public:
 
 	reverse_it() : _pointer(NULL) {}
 	reverse_it(iterator_type ptr) : _pointer(ptr) {}
-	reverse_it(reverse_it const & src) : _pointer(src._pointer) {}
+	template<typename an_iterator>
+	reverse_it(const reverse_it<an_iterator> & src) : _pointer(src.base()) {}
 	~reverse_it() {}
 	reverse_it & operator=(reverse_it const & rhs) {_pointer = rhs._pointer; return *this;}
 	iterator_type base(void) const {return _pointer;}
@@ -33,25 +34,28 @@ protected:
 
 public:
 	reverse_it& operator++() {
+		//std::cerr << "o";
 		_pointer--;
 		return *this;
 	}
 
 	reverse_it operator++(int) {
 		reverse_it it = *this;
-		--(*this);
+		//std::cerr << "p";
+		_pointer--;
 		return it;
 	}
 
 	reverse_it& operator--() {
+		//std::cerr << "y";
 		_pointer++;
 		return *this;
 	}
 
 	reverse_it operator--(int) {
-		reverse_it it = *this;
-		++(*this);
 		//std::cerr << 'a';
+		reverse_it it = *this;
+		_pointer++;
 		return it;
 	}
 

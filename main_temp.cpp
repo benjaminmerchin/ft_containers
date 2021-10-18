@@ -120,9 +120,9 @@ void ft_reverse_iterator_relational_operator() {
 }
 
 void ft_reserve() {
-	std::vector<int>::size_type sz;
+	ft::vector<int>::size_type sz;
 
-	std::vector<int> foo;
+	ft::vector<int> foo;
 	sz = foo.capacity();
 	std::cout << "making foo grow:\n";
 	for (int i=0; i<100; ++i) {
@@ -133,7 +133,7 @@ void ft_reserve() {
 		}
 	}
 
-	std::vector<int> bar;
+	ft::vector<int> bar;
 	sz = bar.capacity();
 	bar.reserve(100);   // this is the only difference with foo above
 	std::cout << "making bar grow:\n";
@@ -147,43 +147,63 @@ void ft_reserve() {
 }
 
 void ft_rbegin() {
-	std::vector<int> myvector (5);  // 5 default-constructed ints
+	ft::vector<int> myvector (5);  // 5 default-constructed ints
 
 	int i=0;
 
-	std::vector<int>::reverse_iterator rit = myvector.rbegin();
+	ft::vector<int>::reverse_iterator rit = myvector.rbegin();
 	for (; rit!= myvector.rend(); ++rit)
 		*rit = ++i;
 
 	std::cout << "myvector contains:";
-	for (std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+	for (ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << '\n';
 }
 
 void ft_rend() {
-	std::vector<int> myvector (5);  // 5 default-constructed ints
+	ft::vector<int> myvector (5);  // 5 default-constructed ints
 
-	std::vector<int>::reverse_iterator rit = myvector.rbegin();
+	ft::vector<int>::reverse_iterator rit = myvector.rbegin();
 
 	int i=0;
 	for (rit = myvector.rbegin(); rit!= myvector.rend(); ++rit)
 		*rit = ++i;
 
 	std::cout << "myvector contains:";
-	for (std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+	for (ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << '\n';
 }
 
+void ft_constructor() {
+	// constructors used in the same order as described above:
+	ft::vector<int> first;                                // empty vector of ints
+	ft::vector<int> second (4,100);                       // four ints with value 100
+	//ft::vector<int> third (second.begin(),second.end());  // iterating through second
+	ft::vector<int> fourth (second);                       // a copy of third
+
+	// the iterator constructor can also be used to construct from arrays:
+	/*
+	int myints[] = {16,2,77,29};
+	ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+
+	std::cout << "The contents of fifth are:";
+	for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
+		std::cout << ' ' << *it;
+	std::cout << '\n';
+	*/
+}
+
 void ft_test() {
+	/*
 	const int size = 5;
 	ft::vector<int> vct(size);
 	ft::vector<int>::reverse_iterator it(vct.rbegin());
 	ft::vector<int>::const_reverse_iterator ite(vct.rend());
 
-	for (int i = 1, j = 0; it != ite /*&& j < 10*/; ++i, ++j) {
-		*it-- = (i * 7);
+	for (int i = 1; it != ite; ++i) {
+		*it++ = (i * 7);
 		std::cout << ">> " << &(*it) << "    " << &(*ite) << std::endl;
 	}
 	//printSize(vct, 1);
@@ -216,7 +236,6 @@ void ft_test() {
 	std::cout << *(it--) << std::endl;
 	std::cout << *it-- << std::endl;
 	std::cout << *--it << std::endl;
-	/*
 	*/
 }
 
@@ -344,24 +363,11 @@ void test_list() {
 }
 
 int main() {
-	test_list();
+	//test_list();
 
 	//ft_test();
 
-	ft::vector<int> v;
-	v.push_back(1);
-	v.push_back(2);
-	v.push_back(3);
-	v.push_back(4);
-	v.push_back(5);
-	ft::vector<int>::iterator it_b = v.begin();
-	ft::vector<int>::iterator it_e = v.end();
-	ft::vector<int>::reverse_iterator rit_b = v.rbegin();
-	ft::vector<int>::reverse_iterator rit_e = v.rend();
-	//ft::reverse_iterator<ft::vector<int>::iterator> rit_b2;
-	std::cout << ">> " << &(*it_b++) << "    " << &(*it_e++) << "    " << &(*rit_b++) << "    " << &(*rit_e++) << std::endl;
-	//std::cout << ">> " << &(*it_b++) << "    " << &(*it_e++) << "    " << &(*rit_b++) << "    " << &(*rit_e++) << std::endl;
-	std::cout << ">> " << &(*it_b) << "    " << &(*it_e) << "    " << &(*rit_b) << "    " << &(*rit_e) << std::endl;
-
+	ft_constructor();
+	std::cerr << "The contents of fifth are: 16 2 77 29" << std::endl;
 	return 0;
 }

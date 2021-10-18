@@ -45,13 +45,15 @@ public:
 //MEMBER FUNCTIONS
 	// 4 constructors required: default/fill/range/copy
 	// default (1)
-	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {}
+	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {
+		std::cerr << "Default Allocator\n";
+	}
 	// fill (2)
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _size(n), _capacity(n) {
 		_array = _alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
 			_array[i] = val;
-		//std::cerr << "Fill Allocator\n";
+		std::cerr << "Fill Allocator\n";
 		//std::cerr << val << std::endl;
 	}
 	// range (3)
@@ -59,14 +61,14 @@ public:
 	vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc) {
 		for (InputIterator it = first; it != last; ++it)
 			push_back(*it);
-		//std::cerr << "Range Allocator\n";
+		std::cerr << "Range Allocator\n";
 	}
 	// copy (4)
 	vector (const vector& x) : _alloc_type(x._alloc_type), _size(x._size), _capacity(x._capacity) {
+		std::cerr << "Copy Allocator\n";
 		_array = _alloc_type.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			_array[i] = x._array[i];
-		//std::cerr << "Copy Allocator\n";
 	}
 	vector& operator= (const vector& x) {
 		if (_size < x._size) {
