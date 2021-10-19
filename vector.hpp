@@ -190,10 +190,12 @@ public:
 			_size = n;
 	}
 	void push_back(const value_type& val) {
-		if (_size == _capacity) //size is always lower (enough space) or equal
-			add_space(1);
-		if (DEBUG)
-			std::cerr << "$" << _capacity << "$";
+		if (_size == _capacity) { //size is always lower (enough space) or equal
+			if (_capacity == 0)
+				reserve(1);
+			else
+				reserve(_capacity * 2);
+		}
 		_alloc_type.construct(&_array[_size], val);
 		_size++;
 	}
@@ -215,7 +217,8 @@ public:
 		for (; it != end(); it++)
 			pos_to_end++;
 		if (DEBUG) std::cerr << '_' << begin_to_pos << '_' << pos_to_end << '_' << n << '|';
-		add_space(n);
+		if (_size + n > _capacity)
+			reserve(_size + n);
 		for (size_type i = 0; i < pos_to_end; i++) {
 			_alloc_type.construct(&_array[begin_to_pos + n + pos_to_end - i - 1], _array[begin_to_pos + pos_to_end - i - 1]);
 			_alloc_type.destroy(&_array[begin_to_pos + pos_to_end - i - 1]);
@@ -237,7 +240,8 @@ public:
 			begin_to_pos++;
 		for (;it != end(); it++)
 			pos_to_end++;
-		add_space(n);
+		if (_size + n > _capacity)
+			reserve(_size + n);
 		for (size_type i = 0; i < pos_to_end; i++) {
 			_alloc_type.construct(&_array[begin_to_pos + n + pos_to_end - i - 1], _array[begin_to_pos + pos_to_end - i - 1]);
 			_alloc_type.destroy(&_array[begin_to_pos + pos_to_end - i - 1]);
@@ -304,6 +308,10 @@ private:
 		}
 		_alloc_type.deallocate(_array, capacity_backup);
 		_array = update;
+		/*if (_capacity == 0)
+			reserve(1);
+		else
+			reserve(_capacity * 2)*/
 	}
 };
 
