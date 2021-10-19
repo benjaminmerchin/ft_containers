@@ -7,7 +7,7 @@ SRC		=	main.cpp
 SRC_TEST=	main_temp.cpp
 OBJ 	=	$(addprefix $(OBJDIR)/, $(SRC:.cpp=.o))
 OBJ_TEST=	$(addprefix $(OBJDIR)/, $(SRC_TEST:.cpp=.o))
-CFLAGS	=	-Wall -Wextra -Werror -std=c++98#-Wshadow -Wno-shadow -g3
+CFLAGS	=	-Wall -Wextra -Werror -std=c++98 -fsanitize=address -g#-Wshadow -Wno-shadow -g3
 
 ifneq (,$(findstring xterm,${TERM}))
 	GREEN := $(shell tput -Txterm setaf 2)
