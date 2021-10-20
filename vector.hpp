@@ -8,8 +8,6 @@
 #include "reverse_iterator.hpp"
 #include "utils.hpp"
 
-#define DEBUG 0
-
 //https://en.cppreference.com/w/cpp/header/vector copier le header class template
 //iterators_traits, reverse_iterator, enable_if, is_integral, equal/lexicographical compare, std::pair, std::make_pair, must be reimplemented.
 
@@ -48,60 +46,45 @@ public:
 //MEMBER FUNCTIONS
 	// 4 constructors required: default/fill/range/copy
 	// default (1)
-	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {
-		if (DEBUG) {
-			std::cerr << "Default Allocator\n";
-			_constructor = 1;
-		}
-	}
+	explicit vector (const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {}
 	// fill (2)
 	explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(n), _capacity(n) {
 		_array = _alloc_type.allocate(n);
 		for (size_type i = 0; i < n; i++)
 			_alloc_type.construct(&_array[i], val);
-		if (DEBUG) {
-			std::cerr << "Fill Allocator\n";
-			_constructor = 2;
-		}
-		//std::cerr << val << std::endl;
 	}
 	// range (3)
 	template <class InputIterator>
 	vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _array(NULL), _size(0), _capacity(0) {
-		if (DEBUG) {
-			std::cerr << "Range Allocator\n";
-			_constructor = 3;
-		}
-		for (InputIterator it = first; it != last; ++it) {
-			if (DEBUG)
-				std::cerr << "@";
-			push_back(*it);
-		}
+		size_type n = 0;
+		size_type i = 0;
+		for (InputIterator it = first; it != last; it++)
+			n++;
+		reserve(n);
+		for (InputIterator it = first; it != last; it++, i++)
+			_alloc_type.construct(&_array[i], *it);
+		_size = n;
 	}
 	// copy (4)
-	vector (const vector& x) : _alloc_type(x._alloc_type), _size(x._size), _capacity(x._capacity) {
-		if (DEBUG) {
-			std::cerr << "Copy Allocator\n";
-			_constructor = 4;
-		}
+	vector (const vector& x) : _alloc_type(x._alloc_type), _array(NULL), _size(x._size), _capacity(x._capacity) {
 		_array = _alloc_type.allocate(_capacity);
 		for (size_type i = 0; i < _size; i++)
 			_alloc_type.construct(&_array[i], x._array[i]);
 	}
 	vector& operator= (const vector& x) {
 		if (_size < x._size) {
-			_alloc_type.deallocate(_array, _capacity);
-			_alloc_type.allocate(x._size);
-			_capacity = x._size;
+			reserve(x._size);
+			resize(x._size);
 		}
+		else
+			for (size_type i = 0; i < _size; i++)
+				_alloc_type.destroy(&_array[i]);
 		_size = x._size;
 		for (size_type i = 0; i < _size; i++)
 			_alloc_type.construct(&_array[i], x._array[i]);
 		return *this;
 	}
 	~vector() {
-		if (DEBUG)
-			std::cerr << "Destructor: " << _size << ' ' << _capacity << " id: " << _constructor << '\n';
 		for (size_type i = 0; i < _size; i++)
 			_alloc_type.destroy(&_array[i]);
 		_alloc_type.deallocate(_array, _capacity);
@@ -139,11 +122,16 @@ public:
 		}
 	}
 	void resize(size_type n, value_type val = value_type()) {
-		for (size_type i = n; i < _size; i++)
-			_alloc_type.destroy(&_array[i]);
-		add_space(n - _capacity);
+		if (n > _capacity) {
+			if (n < _capacity * 2)
+				reserve(_capacity * 2);
+			else
+				reserve(n);
+		}
 		for (size_type i = _size; i < n; i++)
 			_alloc_type.construct(&_array[i], val);
+		for (size_type i = n; i < _size; i++)
+			_alloc_type.destroy(&_array[i]);
 		_size = n;
 	}
 
@@ -173,6 +161,7 @@ public:
 		for (InputIterator it = first; it != last; it++)
 			n++;
 		reserve(n);
+		resize(n);
 		for (size_type i = 0; i < n && i < _size; i++)
 			_alloc_type.destroy(&_array[i]);
 		for (InputIterator it = first; it != last; it++, i++)
@@ -182,6 +171,7 @@ public:
 	}
 	void assign (size_type n, const value_type& val) {
 		reserve(n);
+		resize(n);
 		for (size_type i = 0; i < n && i < _size; i++)
 			_alloc_type.destroy(&_array[i]);
 		for (size_type i = 0; i < n; i++)
@@ -190,7 +180,7 @@ public:
 			_size = n;
 	}
 	void push_back(const value_type& val) {
-		if (_size == _capacity) { //size is always lower (enough space) or equal
+		if (_size == _capacity) {
 			if (_capacity == 0)
 				reserve(1);
 			else
@@ -209,16 +199,16 @@ public:
 		size_type begin_to_pos = 0;
 		size_type pos_to_end = 0;
 		iterator it = begin();
-
-		if (DEBUG) std::cerr << "_" << &it << '_' << &position;
 		for (; it != position; it++)
 			begin_to_pos++;
-		if (DEBUG) std::cerr << "#";
 		for (; it != end(); it++)
 			pos_to_end++;
-		if (DEBUG) std::cerr << '_' << begin_to_pos << '_' << pos_to_end << '_' << n << '|';
-		if (_size + n > _capacity)
-			reserve(_size + n);
+		if (_size + n > _capacity) {
+			if (_size + n < _capacity * 2)
+				reserve(_capacity * 2);
+			else
+				reserve(_size + n);
+		}
 		for (size_type i = 0; i < pos_to_end; i++) {
 			_alloc_type.construct(&_array[begin_to_pos + n + pos_to_end - i - 1], _array[begin_to_pos + pos_to_end - i - 1]);
 			_alloc_type.destroy(&_array[begin_to_pos + pos_to_end - i - 1]);
@@ -240,8 +230,12 @@ public:
 			begin_to_pos++;
 		for (;it != end(); it++)
 			pos_to_end++;
-		if (_size + n > _capacity)
-			reserve(_size + n);
+		if (_size + n > _capacity) {
+			if (_size + n < _capacity * 2)
+				reserve(_capacity * 2);
+			else
+				reserve(_size + n);
+		}
 		for (size_type i = 0; i < pos_to_end; i++) {
 			_alloc_type.construct(&_array[begin_to_pos + n + pos_to_end - i - 1], _array[begin_to_pos + pos_to_end - i - 1]);
 			_alloc_type.destroy(&_array[begin_to_pos + pos_to_end - i - 1]);
@@ -292,27 +286,6 @@ public:
 //ALLOCATOR
 	allocator_type get_allocator() const {return _alloc_type;}
 
-private:
-	void add_space(size_type n) {
-		if (n + _size <= _capacity || n < 0) //no need to add space
-			return ;
-		size_type capacity_backup = _capacity;
-		if (_capacity == 0)
-			_capacity = 1;
-		while (n + _size > _capacity)
-			_capacity *= 2;
-		pointer_type update = _alloc_type.allocate(_capacity);
-		for (size_type i = 0; i < _size; i++) {
-			_alloc_type.construct(&update[i], _array[i]);
-			_alloc_type.destroy(&_array[i]);
-		}
-		_alloc_type.deallocate(_array, capacity_backup);
-		_array = update;
-		/*if (_capacity == 0)
-			reserve(1);
-		else
-			reserve(_capacity * 2)*/
-	}
 };
 
 //NON-MEMBER FUNCTION OVERLOADS
