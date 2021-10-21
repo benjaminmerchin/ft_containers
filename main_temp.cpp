@@ -1,17 +1,20 @@
 #include "vector.hpp"
 #include "stack.hpp"
+#include "map.hpp"
 #include <vector>
 
+#define NS ft
+
 template <typename T>
-void	printSize(ft::vector<T> const &vct, bool print_content = 1)
+void	printSize(NS::vector<T> const &vct, bool print_content = 1)
 {
 	std::cout << "size: " << vct.size() << std::endl;
 	std::cout << "capacity: " << vct.capacity() << std::endl;
 	std::cout << "max_size: " << vct.max_size() << std::endl;
 	if (print_content)
 	{
-		typename ft::vector<T>::const_iterator it = vct.begin();
-		typename ft::vector<T>::const_iterator ite = vct.end();
+		typename NS::vector<T>::const_iterator it = vct.begin();
+		typename NS::vector<T>::const_iterator ite = vct.end();
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
@@ -30,8 +33,8 @@ struct MyAlloc : std::allocator<type> {
 };
 
 void ft_insert() {
-	ft::vector<int> myvector (3,100);
-	ft::vector<int>::iterator it;
+	NS::vector<int> myvector (3,100);
+	NS::vector<int>::iterator it;
 
 	it = myvector.begin();
 	it = myvector.insert ( it , 200 );
@@ -41,7 +44,7 @@ void ft_insert() {
 	// "it" no longer valid, get a new one:
 	it = myvector.begin();
 
-	ft::vector<int> anothervector (2,400);
+	NS::vector<int> anothervector (2,400);
 	myvector.insert (it+2,anothervector.begin(),anothervector.end());
 
 	int myarray [] = { 501,502,503 };
@@ -59,28 +62,28 @@ void ft_swap() {
 	int x=10, y=20;                             // x:10 y:20
 	std::swap(x,y);                              // x:20 y:10
 
-	ft::vector<int> foo (4,x), bar (6,y);       // foo:4x20 bar:6x10
-	ft::swap(foo,bar);                          // foo:6x10 bar:4x20
+	NS::vector<int> foo (4,x), bar (6,y);       // foo:4x20 bar:6x10
+	NS::swap(foo,bar);                          // foo:6x10 bar:4x20
 
 	std::cout << "foo contains:";
-		for (ft::vector<int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+		for (NS::vector<int>::iterator it=foo.begin(); it!=foo.end(); ++it)
 	std::cout << ' ' << *it;
 	std::cout << '\n';
 }
 
 void ft_reverse_iterator() {
-	ft::vector<int> myvector;
+	NS::vector<int> myvector;
 	for (int i=0; i<10; i++) myvector.push_back(i);
 
-	typedef ft::vector<int>::iterator iter_type;
+	typedef NS::vector<int>::iterator iter_type;
 															// ? 0 1 2 3 4 5 6 7 8 9 ?
 	iter_type from (myvector.begin());                      //   ^
 															//         ------>
 	iter_type until (myvector.end());                       //                       ^
 															//
-	ft::reverse_iterator<iter_type> rev_until (from);      // ^
+	NS::reverse_iterator<iter_type> rev_until (from);      // ^
 															//         <------
-	ft::reverse_iterator<iter_type> rev_from (until);      //                  
+	NS::reverse_iterator<iter_type> rev_from (until);      //                  
 
 	std::cout << "myvector:";
 	while (rev_from != rev_until)
@@ -140,9 +143,9 @@ void ft_reverse_iterator_relational_operator() {
 }
 
 void ft_reserve() {
-	ft::vector<int>::size_type sz;
+	NS::vector<int>::size_type sz;
 
-	ft::vector<int> foo;
+	NS::vector<int> foo;
 	sz = foo.capacity();
 	std::cout << "making foo grow: ";
 	for (int i=0; i<100; ++i) {
@@ -153,7 +156,7 @@ void ft_reserve() {
 		}
 	}
 
-	ft::vector<int> bar;
+	NS::vector<int> bar;
 	sz = bar.capacity();
 	bar.reserve(100);   // this is the only difference with foo above
 	std::cout << "|making bar grow: ";
@@ -168,48 +171,48 @@ void ft_reserve() {
 }
 
 void ft_rbegin() {
-	ft::vector<int> myvector (5);  // 5 default-constructed ints
+	NS::vector<int> myvector (5);  // 5 default-constructed ints
 
 	int i=0;
 
-	ft::vector<int>::reverse_iterator rit = myvector.rbegin();
+	NS::vector<int>::reverse_iterator rit = myvector.rbegin();
 	for (; rit!= myvector.rend(); ++rit)
 		*rit = ++i;
 
 	std::cout << "myvector contains:";
-	for (ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+	for (NS::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << '\n';
 }
 
 void ft_rend() {
-	ft::vector<int> myvector (5);  // 5 default-constructed ints
+	NS::vector<int> myvector (5);  // 5 default-constructed ints
 
-	ft::vector<int>::reverse_iterator rit = myvector.rbegin();
+	NS::vector<int>::reverse_iterator rit = myvector.rbegin();
 
 	int i=0;
 	for (rit = myvector.rbegin(); rit!= myvector.rend(); ++rit)
 		*rit = ++i;
 
 	std::cout << "myvector contains:";
-	for (ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+	for (NS::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << '\n';
 }
 
 void ft_constructor() {
 	// constructors used in the same order as described above:
-	ft::vector<int> first;                // DEFAULT
-	ft::vector<int> second (4,100);          // four ints with value 100 FILL
-	ft::vector<int> fourth (second);          // COPY
-	ft::vector<int> third (second.begin(),second.end());  // RANGE
+	NS::vector<int> first;                // DEFAULT
+	NS::vector<int> second (4,100);          // four ints with value 100 FILL
+	NS::vector<int> fourth (second);          // COPY
+	NS::vector<int> third (second.begin(),second.end());  // RANGE
 
 	// the iterator constructor can also be used to construct from arrays:
 	int myints[] = {16,2,77,29};
-	ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+	NS::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
 
 	std::cout << "The contents of fifth are:";
-	for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
+	for (NS::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
 		std::cout << ' ' << *it;
 	std::cout << '\n';
 	/*
@@ -217,17 +220,17 @@ void ft_constructor() {
 }
 
 template <class T>
-void print_vector(ft::vector<T> myvector) {
+void print_vector(NS::vector<T> myvector) {
 	for (unsigned long i=0; i<myvector.size(); ++i)
 		std::cout << myvector[i] << ' ';
 	std::cout << '\n';
 }
 
 void ft_test() {
-	ft::vector<int> vct(7);
-	ft::vector<int> vct_two(4);
-	ft::vector<int> vct_three;
-	ft::vector<int> vct_four;
+	NS::vector<int> vct(7);
+	NS::vector<int> vct_two(4);
+	NS::vector<int> vct_three;
+	NS::vector<int> vct_four;
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
 		vct[i] = (vct.size() - i) * 3;
@@ -246,7 +249,7 @@ void ft_test() {
 	printSize(vct);
 	/*
 	*/
-    ft::vector<char> characters;
+    NS::vector<char> characters;
  
  
     characters.assign(5, 'a');
@@ -288,7 +291,7 @@ void basic_tests() {
 
 	std::cout << "------------------\n";
 
-	ft::vector<int> b(2, 3);
+	NS::vector<int> b(2, 3);
 	//std::cout << b[0] << ' ' << b[1] << std::endl;
 	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << "\tmax_size:" << b.max_size() << std::endl;
 	b.push_back(time(0)%3);
@@ -299,30 +302,30 @@ void basic_tests() {
 	for (unsigned int i = 0; i < b.size(); i++)
 		std::cout << b[i] << ' ';
 	std::cout << std::endl;
-	for (ft::vector<int>::iterator it = b.begin() ; it != b.end(); ++it)
+	for (NS::vector<int>::iterator it = b.begin() ; it != b.end(); ++it)
 		std::cout << *it << ' ';
 	std::cout << std::endl;
 
 	std::cout << "------------------\n";
 
-	ft::vector<int> c(2, 3);
+	NS::vector<int> c(2, 3);
 	c.assign(7, 100);
-	ft::vector<int>::iterator iter = c.begin();
-	//ft::vector<int>::const_iterator iter = c.end();
+	NS::vector<int>::iterator iter = c.begin();
+	//NS::vector<int>::const_iterator iter = c.end();
 	for (unsigned int i = 0; i < c.size(); i++)
 		std::cout << c[i] << ' ';
 	std::cout << std::endl;
 
 	int myints[] = {1776,7,4};(void)myints;
-	ft::vector<int> d;
+	NS::vector<int> d;
 	//it = c.begin() + 1;
 	//d.
 	std::cout << "------------------\n";
 
-	ft::vector<int> myvector_2 (3,100);
+	NS::vector<int> myvector_2 (3,100);
 	myvector_2.reserve(1000); // ERROR BETWEEN WITH THE ADDRESS OF it IF I REMOVE THIS
-	ft::vector<int>::iterator it;
-	//ft::vector<int> myvector_2;
+	NS::vector<int>::iterator it;
+	//NS::vector<int> myvector_2;
 	//for (int i=1; i<=3; i++)
 	//	myvector_2.push_back(i);
 	std::cout << "A " << &it[0] << std::endl;
@@ -337,7 +340,7 @@ void basic_tests() {
 	// "it" no longer valid, get a new one:
 	it = myvector_2.begin() + 1;
 
-	ft::vector<int> anothervector (myvector_2.begin(), myvector_2.end());
+	NS::vector<int> anothervector (myvector_2.begin(), myvector_2.end());
 	myvector_2.insert (it+2,anothervector.begin(),anothervector.end());
 
 	int myarray [] = { 501,502,503 };
@@ -351,7 +354,7 @@ void basic_tests() {
 	*/
 }
 
-void	checkErase(ft::vector<int> &vct, ft::vector<std::string>::iterator &it) {
+void	checkErase(NS::vector<int> &vct, NS::vector<std::string>::iterator &it) {
 	(void)vct;
 	(void)it;
 	/*
@@ -363,7 +366,7 @@ void	checkErase(ft::vector<int> &vct, ft::vector<std::string>::iterator &it) {
 
 void ft_erase_mli(void) {
 	/*
-	ft::vector<std::string> vct(10);
+	NS::vector<std::string> vct(10);
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
 		vct[i] = std::string((vct.size() - i), i + 65);
@@ -392,7 +395,7 @@ void ft_erase_mli(void) {
 }
 
 void ft_erase() {
-	ft::vector<int> myvector;
+	NS::vector<int> myvector;
 
 	// set some values (from 1 to 10)
 	for (int i=1; i<=10; i++) myvector.push_back(i);
@@ -413,7 +416,7 @@ void ft_erase() {
 	//ft_erase_mli();
 
 
-	ft::vector<int>::iterator it = myvector.begin() + 2;
+	NS::vector<int>::iterator it = myvector.begin() + 2;
 	(void)it;
 }
 
@@ -426,8 +429,8 @@ void test_list() {
 	std::cerr << "foo contains: 10 10 10 10 10 10" << std::endl;
 
 
-	std::cerr << "is_integral w/ float: " << std::boolalpha << ft::is_integral<float>::value << std::endl; 
-	std::cerr << "is_integral w/ int: " << std::boolalpha << ft::is_integral<int>::value << std::endl;
+	std::cerr << "is_integral w/ float: " << std::boolalpha << NS::is_integral<float>::value << std::endl; 
+	std::cerr << "is_integral w/ int: " << std::boolalpha << NS::is_integral<int>::value << std::endl;
 
 	ft_reverse_iterator();
 	std::cerr << "myvector: 9 8 7 6 5 4 3 2 1 0" << std::endl;
@@ -457,7 +460,7 @@ void test_list() {
 }
 
 void stack_size() {
-	ft::stack<int> myints;
+	NS::stack<int> myints;
 	std::cout << "0. size: " << myints.size() << '\t';
 
 	for (int i=0; i<5; i++) myints.push(i);
@@ -469,31 +472,78 @@ void stack_size() {
 }
 
 void stack_push() {
-	ft::stack<int> mystack;
+	{
+		NS::stack<int> mystack;
 
-	for (int i=0; i<5; ++i) mystack.push(i);
+		for (int i=0; i<5; ++i) mystack.push(i);
 
-	std::cout << "Popping out elements...";
-	while (!mystack.empty()) {
-		std::cout << ' ' << mystack.top();
-		mystack.pop();
+		std::cout << "Popping out elements...";
+		while (!mystack.empty()) {
+			std::cout << ' ' << mystack.top();
+			mystack.pop();
+		}
+		std::cout << '\n';
+		std::cerr << "Popping out elements... 4 3 2 1 0" << std::endl;
 	}
-	std::cout << '\n';
-	std::cerr << "Popping out elements... 4 3 2 1 0" << std::endl;
+
+
+	{
+		NS::stack<int> mystack;
+		NS::stack<int> mystack2;
+		std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
+		mystack.push(1);
+		std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
+	}
+}
+
+void pair_constructor() {
+	NS::pair <std::string,double> product1;                     // default constructor
+	NS::pair <std::string,double> product2 ("tomatoes",2.30);   // value init
+	NS::pair <std::string,double> product3 (product2);          // copy constructor
+
+	(void)product1;
+	(void)product2;
+	(void)product3;
+	product1 = NS::make_pair(std::string("lightbulbs"),0.99);   // using make_pair (move)
+
+	product2.first = "shoes";                  // the type of first is string
+	product2.second = 39.90;                   // the type of second is double
+
+	std::cout << "The price of " << product1.first << " is $" << product1.second << '\n';
+	std::cout << "The price of " << product2.first << " is $" << product2.second << '\n';
+	std::cout << "The price of " << product3.first << " is $" << product3.second << '\n';
+	std::pair <std::string,int> planet, homeplanet;
+
+	planet = std::make_pair("Earth",6371);
+
+	homeplanet = planet;
+
+	std::cout << "Home planet: " << homeplanet.first << '\n';
+	std::cout << "Planet size: " << homeplanet.second << '\n';
+	/*
+	*/
+	NS::pair<int,char> foo (10,'z');
+	NS::pair<int,char> bar (90,'a');
+
+	if (foo==bar) std::cout << "foo and bar are equal\n";
+	if (foo!=bar) std::cout << "foo and bar are not equal\n";
+	if (foo< bar) std::cout << "foo is less than bar\n";
+	if (foo> bar) std::cout << "foo is greater than bar\n";
+	if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+	if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 }
 
 int main() {
 	//test_list();
 
 	//ft_test();
-	stack_size();
+	//stack_size();
 	stack_push();
+	//pair_constructor();
 
-	ft::stack<int> mystack;
-	ft::stack<int> mystack2;
-	std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
-	mystack.push(1);
-	std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
+
+
+
 
 	return 0;
 }
