@@ -8,9 +8,6 @@
 #include "reverse_iterator.hpp"
 #include "utils.hpp"
 
-//https://en.cppreference.com/w/cpp/header/vector copier le header class template
-//iterators_traits, reverse_iterator, enable_if, is_integral, equal/lexicographical compare, std::pair, std::make_pair, must be reimplemented.
-
 //reuse the functions from the allocator_traits: allocate, deallocate, construct, destroy & max_size
 //vector is a sequence container that encapsulates dynamic size arrays
 namespace ft {
@@ -36,11 +33,10 @@ public:
 	typedef ft::reverse_iterator<const_iterator>     const_reverse_iterator;
 
 protected:
-	allocator_type _alloc_type; //ie:        std::allocator<T> _alloc_type; basically we store the Alloc which is a class
+	allocator_type _alloc_type;
 	pointer_type _array;
 	size_type _size;
-	size_type _capacity; //toujours une puissance de 2
-	int _constructor;
+	size_type _capacity;
 
 public:
 //MEMBER FUNCTIONS

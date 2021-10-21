@@ -1,4 +1,5 @@
 #include "vector.hpp"
+#include "stack.hpp"
 #include <vector>
 
 template <typename T>
@@ -448,19 +449,51 @@ void test_list() {
 	std::cerr << "The contents of fifth are: 16 2 77 29" << std::endl;
 	ft_insert();
 	std::cerr << "myvector contains: 501 502 503 300 300 400 400 200 100 100 100" << std::endl;
+	ft_erase();
+	std::cerr << "myvector contains: 4 5 7 8 9 10" << std::endl;
 	
 	/*
 	*/
 }
 
+void stack_size() {
+	ft::stack<int> myints;
+	std::cout << "0. size: " << myints.size() << '\t';
+
+	for (int i=0; i<5; i++) myints.push(i);
+	std::cout << "1. size: " << myints.size() << '\t';
+
+	myints.pop();
+	std::cout << "2. size: " << myints.size() << '\n';
+	std::cerr << "0. size: 0\t1. size: 5\t2. size: 4" << std::endl;
+}
+
+void stack_push() {
+	ft::stack<int> mystack;
+
+	for (int i=0; i<5; ++i) mystack.push(i);
+
+	std::cout << "Popping out elements...";
+	while (!mystack.empty()) {
+		std::cout << ' ' << mystack.top();
+		mystack.pop();
+	}
+	std::cout << '\n';
+	std::cerr << "Popping out elements... 4 3 2 1 0" << std::endl;
+}
+
 int main() {
-	test_list();
+	//test_list();
 
 	//ft_test();
+	stack_size();
+	stack_push();
 
-	ft_erase();
-	std::cerr << "myvector contains: 4 5 7 8 9 10" << std::endl;
-	
+	ft::stack<int> mystack;
+	ft::stack<int> mystack2;
+	std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
+	mystack.push(1);
+	std::cout << std::boolalpha << (mystack == mystack2) << std::endl;
 
 	return 0;
 }
