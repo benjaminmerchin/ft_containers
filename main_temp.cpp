@@ -533,16 +533,21 @@ void pair_constructor() {
 	if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 }
 
+void map_tree() {
+
+}
+
 int main() {
 	//test_list();
 
 	//ft_test();
 	//stack_size();
-	stack_push();
+	//stack_push();
 	//pair_constructor();
 
 
-
+	map_tree();
+	test_tree();
 
 
 	return 0;
