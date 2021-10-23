@@ -2,6 +2,7 @@
 #include "stack.hpp"
 #include "map.hpp"
 #include <vector>
+#include <map>
 
 #define NS ft
 
@@ -545,10 +546,11 @@ int main() {
 	//stack_push();
 	//pair_constructor();
 
-
 	map_tree();
 	test_tree();
-
+	std::cout << "---------------------------------\n";
+	NS::map<int, int> a;
+	a.insert(NS::pair<int,int>(1, 2));
 
 	return 0;
 }
