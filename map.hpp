@@ -31,10 +31,20 @@ class map {
 public:
 	typedef Key                                          key_type;
 	typedef T                                            mapped_type;
-	typedef pair<const key_type,mapped_type>             value_type;
+	typedef ft::pair<const key_type,mapped_type>             value_type;
 	typedef Compare                                      key_compare;
 	typedef node<value_type>                             node_type;
 	//typedef     Nested function class to compare elements   value_compare;
+	class value_compare {
+		protected:
+			Compare comp;
+			value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
+		public:
+			typedef bool result_type;
+			typedef value_type first_argument_type;
+			typedef value_type second_argument_type;
+			bool operator() (const value_type& x, const value_type& y) const {return comp(x.first, y.first);}
+	};
 	typedef Alloc                                        allocator_type;
 	typedef typename std::allocator<node<value_type> >   node_allocator;
 	typedef typename allocator_type::reference           reference;
@@ -103,7 +113,7 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	(void)val;
 	(void)temp;
 	std::cerr << val.first << ' ' << val.second << std::endl;
-	_root = insert_node(val, _root, NULL);
+	_root = insert_node(val, _root);
 	
 	return pair<iterator,bool>(NULL, true);
 }
@@ -113,7 +123,7 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 
 //OBSERVERS
 	key_compare key_comp() const {return _key_compare;}
-//	value_compare value_comp() const {return _key_compare;}
+	value_compare value_comp() const {return (value_compare(this->_key_compare));}
 
 //OPERATIONS
 // iterator find (const key_type& k);
@@ -161,7 +171,14 @@ private:
 	}
 
 	node_type* insert_node(const value_type& val, node_type *current, node_type *parent = NULL) {
-		new_node(val, parent);
+		if (!current)
+			return new_node(val, parent);
+		if (_key_compare(val.first, current->value.first))
+			current->left = insert_node(val, current->left, current);
+		else if (_key_compare(current->value.first, val.first))
+			current->right = insert_node(val, current->right, current);
+		else
+			return current;
 		(void)current;
 		return parent;
 	}
