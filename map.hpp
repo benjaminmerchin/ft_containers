@@ -19,6 +19,7 @@ struct node {
 	node *parent;
 	int height;
 	node(value_type v, node *l, node *r, node *p) : value(v), left(l), right(r), parent(p), height(1) {}
+	~node() {}
 };
 
 //Association of key and value_type https://cplusplus.com/reference/map/map/
@@ -121,7 +122,9 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 }
 // erase
 // swap
-// clear
+	void clear() {
+		clear_from_node(_root);
+	}
 
 //OBSERVERS
 	key_compare key_comp() const {return _key_compare;}
@@ -176,15 +179,22 @@ private:
 	int max(int a, int b) {return (a > b)? a : b;}
 
 	int height(node_type *node) {
-		if (node == NULL)
+		if (!node)
 			return 0;
 		return node->height;
 	}
 
 	int get_balance(node_type *node) {
-		if (node == NULL)
+		if (!node)
 			return 0;
 		return height(node->left) - height(node->right);
+	}
+
+	node_type* min_value_node(node_type *node) {
+		node_type *current = node;
+		while (current->left != NULL)
+			current = current ->left;
+		return current;
 	}
 
 	node_type* insert_node(const value_type& val, node_type *current, node_type *parent = NULL) {
@@ -227,7 +237,7 @@ private:
 	}
 
 	node_type* delete_node(node_type *current, const key_type key) {
-		if (current == NULL)
+		if (!current)
 			return current;
 		if (_key_compare(key, current->value.first))
 			current->left = delete_node(current->left, key);
@@ -235,14 +245,41 @@ private:
 			current->right = delete_node(current->right, key);
 		else { //we found the node
 			//deleting process here
+			if (!current->left || !current->right) {
+				node_type *temp = current->left ? current->left : current->right;
+				if (!temp) {
+					temp = current;
+					current = NULL; //free current here
+				}
+				else
+					*current = *temp;
+				//free temp; ?? destroy and deallocate here
+			}
+			else {
+				node_type *temp = min_value_node(current->right);
+				current->value = temp->value;
+				current->right = delete_node(current->right, key);
+			}
 		}
 
 
-		if (current == NULL)
+		if (!current)
 			return current;
 		current->height = 1 + max(height(current->left), height(current->right));
 		//rotate if necessary
 		return current;
+	}
+
+	void clear_from_node(node_type *current) {
+		if (current) {
+			clear_from_node(current->left);
+			clear_from_node(current->right);
+			std::allocator<node<value_type> >().destroy(current);
+			std::allocator<node<value_type> >().deallocate(current, 1);
+			_size--;
+			if (current == _root)
+				_root = NULL;
+		}
 	}
 
 
