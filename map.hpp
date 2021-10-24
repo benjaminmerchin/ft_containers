@@ -97,31 +97,14 @@ public:
 
 //MODIFIERS
 // insert
-node_type* new_node(const value_type& val, node_type *parent) {
-	node_type *temp = std::allocator<node<value_type> >().allocate(1);
-	std::allocator<node<value_type> >().construct(temp, node_type(val, parent, NULL, NULL));
-	//node<value_type> 
-/*
-	temp->right = NULL;
-	temp->left = NULL;
-	temp->parent = parent;
-	temp->value = pair<int,int>(1, 2);
-	temp->value.first = val.first;
-	temp->value.second = val.second;
-*/
-	(void)val;
-	(void)parent;
-	(void)temp;
-	return temp;
-}
 
 pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const key_type,mapped_type> 
 	node_type *temp = _root;
 	(void)val;
 	(void)temp;
 	std::cerr << val.first << ' ' << val.second << std::endl;
-	if (!_root)
-		_root = new_node(val, NULL);
+	_root = insert_node(val, _root, NULL);
+	
 	return pair<iterator,bool>(NULL, true);
 }
 // erase
@@ -129,8 +112,8 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 // clear
 
 //OBSERVERS
-// key_compare key_comp() const;
-// value_compare value_comp() const;
+	key_compare key_comp() const {return _key_compare;}
+//	value_compare value_comp() const {return _key_compare;}
 
 //OPERATIONS
 // iterator find (const key_type& k);
@@ -144,7 +127,7 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 // pair<iterator,iterator>             equal_range (const key_type& k);
 
 //ALLOCATORS
-// allocator_type get_allocator() const;
+	allocator_type get_allocator() const {return _alloc_type;}
 
 //TREE
 private:
@@ -155,6 +138,32 @@ private:
 			std::cout << start->value.first << '_' << start->value.second << std::endl;
 			print(start->right);
 		}
+	}
+
+	node_type* new_node(const value_type& val, node_type *parent) {
+		node_type *temp = std::allocator<node<value_type> >().allocate(1);
+		std::allocator<node<value_type> >().construct(temp, node_type(val, parent, NULL, NULL));
+		temp->right = NULL;
+		temp->left = NULL;
+		temp->parent = parent;
+		//node<value_type> 
+	/*
+		temp->value = pair<int,int>(1, 2);
+		temp->value.first = val.first;
+		temp->value.second = val.second;
+	*/
+		std::cerr << temp->value.first << ' ' << temp->value.second << std::endl;
+		(void)val;
+		(void)parent;
+		(void)temp;
+		_size++;
+		return temp;
+	}
+
+	node_type* insert_node(const value_type& val, node_type *current, node_type *parent = NULL) {
+		new_node(val, parent);
+		(void)current;
+		return parent;
 	}
 
 
