@@ -145,15 +145,24 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	allocator_type get_allocator() const {return _alloc_type;}
 
 //TREE
-	void print(node_type start) {
+	void print_all() {
+		print(_root);
+	}
+
+private:
+
+	void print(node_type *start) {
 		if (start) {
 			print(start->left);
-			std::cout << start->value.first << '_' << start->value.second << std::endl;
+			std::cout << start->value.first << '_' << start->value.second << "  " << start->height;
+			if (start->parent)
+				std::cout << " p:" << start->parent->value.first;
+			else
+				std::cout << " root";
+			std::cout << std::endl;
 			print(start->right);
 		}
 	}
-private:
-
 
 	node_type* new_node(const value_type& val, node_type *parent) {
 		node_type *temp = std::allocator<node<value_type> >().allocate(1);
@@ -236,7 +245,7 @@ private:
 		return current;
 	}
 
-	node_type* delete_node(node_type *current, const key_type key) {
+	node_type* delete_node(node_type *current, const key_type& key) {
 		if (!current)
 			return current;
 		if (_key_compare(key, current->value.first))
@@ -247,18 +256,27 @@ private:
 			//deleting process here
 			if (!current->left || !current->right) {
 				node_type *temp = current->left ? current->left : current->right;
-				if (!temp) {
+				if (!current->left && !current->right) {
 					temp = current;
-					current = NULL; //free current here
+					std::allocator<node<value_type> >().destroy(temp);
+					std::allocator<node<value_type> >().deallocate(temp, 1);
+					current = NULL;
+					_size--;
 				}
-				else
-					*current = *temp;
-				//free temp; ?? destroy and deallocate here
+				else {
+					temp->parent = current->parent;
+					node_type *temp2 = current;
+					current = temp;
+					std::allocator<node<value_type> >().destroy(temp);
+					std::allocator<node<value_type> >().deallocate(temp, 1);
+					_size--;
+				}
 			}
 			else {
 				node_type *temp = min_value_node(current->right);
 				current->value = temp->value;
 				current->right = delete_node(current->right, key);
+				//PROBLEM HERE WITH 2 CHILD OMG
 			}
 		}
 
@@ -266,7 +284,7 @@ private:
 		if (!current)
 			return current;
 		current->height = 1 + max(height(current->left), height(current->right));
-		//rotate if necessary
+		//rotate here if necessary
 		return current;
 	}
 
