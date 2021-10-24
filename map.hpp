@@ -17,10 +17,12 @@ struct node {
 	node *left;
 	node *right;
 	node *parent;
-	node(value_type v, node *l, node *r, node *p) : value(v), left(l), right(r), parent(p) {}
+	int height;
+	node(value_type v, node *l, node *r, node *p) : value(v), left(l), right(r), parent(p), height(1) {}
 };
 
 //Association of key and value_type https://cplusplus.com/reference/map/map/
+//Tutorial used: https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 template < class Key,                                           // map::key_type
            class T,                                             // map::mapped_type
            class Compare = std::less<Key>,                      // map::key_compare
@@ -112,7 +114,7 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	node_type *temp = _root;
 	(void)val;
 	(void)temp;
-	std::cerr << val.first << ' ' << val.second << std::endl;
+	std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
 	_root = insert_node(val, _root);
 	
 	return pair<iterator,bool>(NULL, true);
@@ -140,8 +142,6 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	allocator_type get_allocator() const {return _alloc_type;}
 
 //TREE
-private:
-
 	void print(node_type start) {
 		if (start) {
 			print(start->left);
@@ -149,6 +149,8 @@ private:
 			print(start->right);
 		}
 	}
+private:
+
 
 	node_type* new_node(const value_type& val, node_type *parent) {
 		node_type *temp = std::allocator<node<value_type> >().allocate(1);
@@ -156,18 +158,33 @@ private:
 		temp->right = NULL;
 		temp->left = NULL;
 		temp->parent = parent;
+		std::cerr << "new_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
+		//temp->height = 1;
 		//node<value_type> 
 	/*
 		temp->value = pair<int,int>(1, 2);
 		temp->value.first = val.first;
 		temp->value.second = val.second;
-	*/
-		std::cerr << temp->value.first << ' ' << temp->value.second << std::endl;
 		(void)val;
 		(void)parent;
 		(void)temp;
+	*/
 		_size++;
 		return temp;
+	}
+
+	int max(int a, int b) {return (a > b)? a : b;}
+
+	int height(node_type *node) {
+		if (node == NULL)
+			return 0;
+		return node->height;
+	}
+
+	int get_balance(node_type *node) {
+		if (node == NULL)
+			return 0;
+		return height(node->left) - height(node->right);
 	}
 
 	node_type* insert_node(const value_type& val, node_type *current, node_type *parent = NULL) {
@@ -179,8 +196,53 @@ private:
 			current->right = insert_node(val, current->right, current);
 		else
 			return current;
-		(void)current;
-		return parent;
+
+		current->height = 1 + max(height(current->left), height(current->right));
+		//rotate here if neccessary
+/*
+    // Left Left Case
+    if (balance > 1 && getBalance(root->left) >= 0)
+        return rightRotate(root);
+
+    // Left Right Case
+    if (balance > 1 && getBalance(root->left) < 0)
+    {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+
+    // Right Right Case
+    if (balance < -1 && getBalance(root->right) <= 0)
+        return leftRotate(root);
+
+    // Right Left Case
+    if (balance < -1 && getBalance(root->right) > 0)
+    {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+
+*/
+		return current;
+	}
+
+	node_type* delete_node(node_type *current, const key_type key) {
+		if (current == NULL)
+			return current;
+		if (_key_compare(key, current->value.first))
+			current->left = delete_node(current->left, key);
+		else if (_key_compare(current->value.first, key))
+			current->right = delete_node(current->right, key);
+		else { //we found the node
+			//deleting process here
+		}
+
+
+		if (current == NULL)
+			return current;
+		current->height = 1 + max(height(current->left), height(current->right));
+		//rotate if necessary
+		return current;
 	}
 
 

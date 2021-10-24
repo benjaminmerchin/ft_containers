@@ -550,7 +550,10 @@ int main() {
 	test_tree();
 	std::cout << "---------------------------------\n";
 	NS::map<int, int> a;
-	a.insert(NS::pair<int,int>(1, 2));
+	a.insert(NS::pair<int,int>(2, 4));
+	a.insert(NS::pair<int,int>(1, 3));
+	a.insert(NS::pair<int,int>(3, 6));
+	a.insert(NS::pair<int,int>(4, 6));
 
 	return 0;
 }
