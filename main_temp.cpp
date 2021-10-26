@@ -3,6 +3,8 @@
 #include "map.hpp"
 #include <vector>
 #include <map>
+#include <iostream>
+#include <utility>
 
 #define NS ft
 
@@ -534,8 +536,20 @@ void pair_constructor() {
 	if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 }
 
-void map_tree() {
-
+void map_std() {
+	std::map<int,int> b;
+	b.insert(std::pair<int,int>(4, 106));
+	b.insert(std::pair<int,int>(1, 106));
+	b.insert(std::pair<int,int>(0, 106));
+	b.insert(std::pair<int,int>(2, 106));
+	b.insert(std::pair<int,int>(10, 106));
+	b.insert(std::pair<int,int>(9, 106));
+	b.insert(std::pair<int,int>(11, 106));
+	std::map<int, int>::iterator it = b.begin();
+	std::map<int, int>::iterator ite = b.end();
+	for (; it != ite; it++)
+		std::cout << it->first << ' ' << it->second << std::endl;
+	std::cout << "---------------------------------\n";
 }
 
 int main() {
@@ -546,16 +560,47 @@ int main() {
 	//stack_push();
 	//pair_constructor();
 
-	map_tree();
+	/*
+	*/
+	map_std();
 	test_tree();
 	std::cout << "---------------------------------\n";
 	NS::map<int, int> a;
 	a.insert(NS::pair<int,int>(2, 104));
 	a.insert(NS::pair<int,int>(1, 103));
-	a.insert(NS::pair<int,int>(3, 106));
+	a.insert(NS::pair<int,int>(3, 100));
 	a.insert(NS::pair<int,int>(4, 106));
 
 	a.print_all();
 
+	a.erase(2);
+	a.erase(3);
+	a.erase(1);
+	a.erase(4);
+	std::cout << "---------------------------------\n";
+	a.print_all();
+	std::cout << "---------------------------------\n";
+	a.insert(NS::pair<int,int>(4, 106));
+	a.insert(NS::pair<int,int>(3, 106));
+	a.insert(NS::pair<int,int>(3, 106));
+	a.print_all();
+
+
+	NS::map<int, int>::iterator it = a.begin();
+	std::cout << it->first << std::endl;
+	//++it;
+	/*
+ft::map_iterator<ft::pair<const int, int>, ft::node<ft::pair<const int, int> > *>::value_type
+ft::pair<const int, int>
+
+	std::string str = "ok boomer";
+	char * writable = new char[str.size() + 1];
+	(void)writable;
+	NS::map<int, int> a;
+	while (1) {
+		a.insert(NS::pair<int,int>(2, 104));
+		a.erase(2);
+	}
+	*/
 	return 0;
 }

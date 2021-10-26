@@ -25,7 +25,48 @@ public:
 	map_iterator & operator=(map_iterator const & rhs) {_node = rhs._node; return *this;}
 	~map_iterator() {}
 
+	map_iterator& operator++ (void) {increase(); return *this;}
+	map_iterator operator++ (int) {map_iterator it = *this; ++(*this); return *this;}
+	map_iterator& operator-- (void) {decrease(); return *this;}
+	map_iterator operator-- (int) {map_iterator it = *this; --(*this); return *this;}
 
+	reference operator*() const {return _node->value;}
+	pointer operator->() const {return &(operator*());}
+	operator map_iterator<const T, node_type>() const {return map_iterator<const T, node_type>(_node);}
+
+private:
+	void increase() { //revoir
+		if (_node->right) {
+			_node = _node->right;
+			while (_node->left)
+				_node = _node->left;
+		}
+		else {
+			node_type temp = _node;
+			_node = _node->parent;
+			while (temp->left != temp) {
+				temp = _node;
+				_node = _node->parent;
+			}
+			(void)temp;
+		}
+	}
+
+	void decrease() { //revoir
+		if (_node->left) {
+			_node = _node->left;
+			while (_node->right)
+				_node = _node->right;
+		}
+		else {
+			node_type temp = _node;
+			_node = _node->parent;
+			while (temp->right != temp) {
+				temp = _node;
+				_node = _node->parent;
+			}
+		}
+	}
 };
 
 }

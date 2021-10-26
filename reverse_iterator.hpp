@@ -34,26 +34,22 @@ protected:
 
 public:
 	reverse_iterator& operator++() {
-		//std::cerr << "o";
 		_pointer--;
 		return *this;
 	}
 
 	reverse_iterator operator++(int) {
 		reverse_iterator it = *this;
-		//std::cerr << "p";
 		_pointer--;
 		return it;
 	}
 
 	reverse_iterator& operator--() {
-		//std::cerr << "y";
 		_pointer++;
 		return *this;
 	}
 
 	reverse_iterator operator--(int) {
-		//std::cerr << 'a';
 		reverse_iterator it = *this;
 		_pointer++;
 		return it;

@@ -13,12 +13,9 @@ struct pair {
 	second_type second;
 
 //CONSTRUCTORS
-	//default (1)	
 	pair() {}
-	//copy (2)	
 	template<class U, class V>
 	pair (const pair<U,V>& pr) : first(pr.first), second(pr.second) {}
-	//initialization (3)	
 	pair (const first_type& a, const second_type& b) : first(a), second(b) {}
 	~pair () {}
 	pair& operator= (const pair& pr) {

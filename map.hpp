@@ -8,6 +8,9 @@
 #include "tree.hpp"
 #include "map_iterator.hpp"
 #include "vector.hpp"
+#include "utils.hpp"
+
+#define DEBUG 1
 
 namespace ft {
 
@@ -23,7 +26,7 @@ struct node {
 };
 
 //Association of key and value_type https://cplusplus.com/reference/map/map/
-//Tutorial used: https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
+//Tree Tutorial used: https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 template < class Key,                                           // map::key_type
            class T,                                             // map::mapped_type
            class Compare = std::less<Key>,                      // map::key_compare
@@ -32,68 +35,82 @@ template < class Key,                                           // map::key_type
 class map {
 
 public:
-	typedef Key                                          key_type;
-	typedef T                                            mapped_type;
-	typedef ft::pair<const key_type,mapped_type>             value_type;
-	typedef Compare                                      key_compare;
-	typedef node<value_type>                             node_type;
-	//typedef     Nested function class to compare elements   value_compare;
+	typedef Key                                                   key_type;
+	typedef T                                                     mapped_type;
+	typedef ft::pair<const key_type,mapped_type>                  value_type;
+	typedef Compare                                               key_compare;
+	typedef node<value_type>                                      node_type;
 	class value_compare {
 		protected:
 			Compare comp;
-			value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
+			value_compare (Compare c) : comp(c) {}
 		public:
 			typedef bool result_type;
 			typedef value_type first_argument_type;
 			typedef value_type second_argument_type;
 			bool operator() (const value_type& x, const value_type& y) const {return comp(x.first, y.first);}
 	};
-	typedef Alloc                                        allocator_type;
-	typedef typename std::allocator<node<value_type> >   node_allocator;
-	typedef typename allocator_type::reference           reference;
-	typedef typename allocator_type::const_reference     const_reference;
-	typedef typename allocator_type::pointer             pointer;
-	//typedef typename allocator_type::constpointer        const_pointer;
-	typedef typename allocator_type::size_type           size_type;
-	typedef typename allocator_type::difference_type     difference_type;
-	typedef vector_iterator<value_type>                  iterator;
-	typedef vector_iterator<value_type const>            const_iterator;
-	typedef ft::reverse_iterator<iterator>               reverse_iterator;
-	typedef ft::reverse_iterator<const_iterator>         const_reverse_iterator;
+	typedef Alloc                                                 allocator_type;
+	typedef typename allocator_type::template rebind<node_type>::other node_allocator;
+	typedef typename allocator_type::reference                    reference;
+	typedef typename allocator_type::const_reference              const_reference;
+	typedef typename allocator_type::pointer                      pointer;
+	typedef typename allocator_type::const_pointer                const_pointer;
+	typedef typename allocator_type::size_type                    size_type;
+	typedef typename allocator_type::difference_type              difference_type;
+	typedef map_iterator<value_type, node_type*>                  iterator;
+	typedef map_iterator<const value_type, node_type*>            const_iterator;
+	typedef ft::reverse_iterator<iterator>                        reverse_iterator;
+	typedef ft::reverse_iterator<const_iterator>                  const_reverse_iterator;
 /*
-    iterator	a bidirectional iterator to value_type	convertible to const_iterator
-    const_iterator	a bidirectional iterator to const value_type	
-    reverse_iterator	reverse_iterator<iterator>	
-    const_reverse_iterator	reverse_iterator<const_iterator>
+	iterator	a bidirectional iterator to value_type	convertible to const_iterator
+	const_iterator	a bidirectional iterator to const value_type	
+	reverse_iterator	reverse_iterator<iterator>	
+	const_reverse_iterator	reverse_iterator<const_iterator>
 */
 
+// 	template <class Type> struct rebind {
+//   typedef allocator<Type> other;
+// };
+
 protected:
-	allocator_type _alloc_type;
+	node_allocator _alloc_type;
 	key_compare _key_compare;
 	size_type _size;
 	node_type *_root;
 
 public:
 //CONSTRUCTORS
-	//empty (1)	
+	//empty (1)
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _key_compare(comp), _size(0), _root(NULL) {}
-	//range (2)	
+	//range (2)
 	template <class InputIterator>
 	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _key_compare(comp), _size(0), _root(NULL) {
 		(void)first;
 		(void)last;
 	}
-	//copy (3)	
+	//copy (3)
 	map (const map& x) : _alloc_type(x._alloc_type), _key_compare(x._key_compare), _size(0), _root(NULL) {}
-	~map () {}
+	~map () {clear_from_node(_root);}
 	map& operator= (const map& x) {
 		(void)x;
 	}
 
 //ITERATORS
-// iterator begin();
-// const_iterator begin() const;
-// iterator end();
+	iterator begin() {
+		if (_size == 0)
+			return iterator(_root); //pb ?
+		node_type * temp = _root;
+		while (temp && temp->left)
+			temp = temp->left;
+		return iterator(temp);
+		//return (iterator(_root));
+	}
+//	const_iterator begin() const {}
+	iterator end() {
+		// iterator temp(_root);
+		// while (!)
+	}
 // const_iterator end() const;
 // reverse_iterator rbegin();
 // const_reverse_iterator rbegin() const;
@@ -101,9 +118,9 @@ public:
 // const_reverse_iterator rend() const;
 
 //CAPACITY
-// bool empty() const;
-// size_type size() const;
-// size_type max_size() const;
+	bool empty() const {return (_size == 0 ? true : false);}
+	size_type size() const {return _size;}
+	size_type max_size() const {return _alloc_type.max_size();}
 
 //ELEMENT ACCESS
 // mapped_type& operator[] (const key_type& k);
@@ -115,12 +132,17 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	node_type *temp = _root;
 	(void)val;
 	(void)temp;
-	std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
+	if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
 	_root = insert_node(val, _root);
 	
 	return pair<iterator,bool>(NULL, true);
 }
 // erase
+size_type erase (const key_type& k) {
+	size_type backup = _size;
+	_root = delete_node(_root, k);
+	return backup - _size;
+}
 // swap
 	void clear() {
 		clear_from_node(_root);
@@ -165,13 +187,13 @@ private:
 	}
 
 	node_type* new_node(const value_type& val, node_type *parent) {
-		node_type *temp = std::allocator<node<value_type> >().allocate(1);
-		std::allocator<node<value_type> >().construct(temp, node_type(val, parent, NULL, NULL));
+		node_type *temp = _alloc_type.allocate(1);
+		_alloc_type.construct(temp, node_type(val, parent, NULL, NULL));
 		temp->right = NULL;
 		temp->left = NULL;
 		temp->parent = parent;
-		std::cerr << "new_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
-		//temp->height = 1;
+		temp->height = 1;
+		if (DEBUG) std::cerr << "new_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
 		//node<value_type> 
 	/*
 		temp->value = pair<int,int>(1, 2);
@@ -202,7 +224,14 @@ private:
 	node_type* min_value_node(node_type *node) {
 		node_type *current = node;
 		while (current->left != NULL)
-			current = current ->left;
+			current = current->left;
+		return current;
+	}
+
+	node_type* max_value_node(node_type *node) {
+		node_type *current = node;
+		while (current->right != NULL)
+			current = current->right;
 		return current;
 	}
 
@@ -219,29 +248,29 @@ private:
 		current->height = 1 + max(height(current->left), height(current->right));
 		//rotate here if neccessary
 /*
-    // Left Left Case
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
+		// Left Left Case
+		if (balance > 1 && getBalance(root->left) >= 0)
+			return rightRotate(root);
 
-    // Left Right Case
-    if (balance > 1 && getBalance(root->left) < 0)
-    {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
-    }
+		// Left Right Case
+		if (balance > 1 && getBalance(root->left) < 0)
+		{
+			root->left = leftRotate(root->left);
+			return rightRotate(root);
+		}
 
-    // Right Right Case
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
+		// Right Right Case
+		if (balance < -1 && getBalance(root->right) <= 0)
+			return leftRotate(root);
 
-    // Right Left Case
-    if (balance < -1 && getBalance(root->right) > 0)
-    {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
-    }
-
+		// Right Left Case
+		if (balance < -1 && getBalance(root->right) > 0)
+		{
+			root->right = rightRotate(root->right);
+			return leftRotate(root);
+		}
 */
+
 		return current;
 	}
 
@@ -258,8 +287,9 @@ private:
 				node_type *temp = current->left ? current->left : current->right;
 				if (!current->left && !current->right) {
 					temp = current;
-					std::allocator<node<value_type> >().destroy(temp);
-					std::allocator<node<value_type> >().deallocate(temp, 1);
+					if (DEBUG) std::cerr << "del_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
+					_alloc_type.destroy(temp);
+					_alloc_type.deallocate(temp, 1);
 					current = NULL;
 					_size--;
 				}
@@ -267,19 +297,36 @@ private:
 					temp->parent = current->parent;
 					node_type *temp2 = current;
 					current = temp;
-					std::allocator<node<value_type> >().destroy(temp);
-					std::allocator<node<value_type> >().deallocate(temp, 1);
+					if (DEBUG) std::cerr << "del_node: " << temp2->value.first << ' ' << temp2->value.second << std::endl;
+					_alloc_type.destroy(temp2);
+					_alloc_type.deallocate(temp2, 1);
 					_size--;
 				}
 			}
 			else {
 				node_type *temp = min_value_node(current->right);
+				if (temp != current->right) {
+					temp->right = current->right;
+					current->right->parent = temp;
+				}
+				temp->left = current->left;
+				current->left->parent = temp;
+				temp->parent->left = NULL;
+				temp->parent = current->parent;
+				if (_root == current)
+					_root = temp; //doute ici
+				if (DEBUG) std::cerr << "del_node: " << current->value.first << ' ' << current->value.second << std::endl;
+				_alloc_type.destroy(current);
+				_alloc_type.deallocate(current, 1);
+				/*
+				node_type *temp = min_value_node(current->right);
 				current->value = temp->value;
 				current->right = delete_node(current->right, key);
-				//PROBLEM HERE WITH 2 CHILD OMG
+				*/
+				//std::cerr << "problem 2 child\n";
+				current = temp;
 			}
 		}
-
 
 		if (!current)
 			return current;
@@ -292,20 +339,31 @@ private:
 		if (current) {
 			clear_from_node(current->left);
 			clear_from_node(current->right);
-			std::allocator<node<value_type> >().destroy(current);
-			std::allocator<node<value_type> >().deallocate(current, 1);
+			_alloc_type.destroy(current);
+			_alloc_type.deallocate(current, 1);
 			_size--;
 			if (current == _root)
 				_root = NULL;
 		}
 	}
 
-
 };
-/*
-const ft::map<int, int, std::__1::less<int>, std::__1::allocator<ft::pair<const int, int> > >::value_type
-const pair<const int, int>
-*/
+
 }
 
 #endif
+
+/*
+
+
+
+node<pair<const int, int> > *
+
+
+ft::pair<const int, int> *
+
+
+
+
+
+*/
