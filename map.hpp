@@ -21,7 +21,8 @@ struct node {
 	node *right;
 	node *parent;
 	int height;
-	node(value_type v, node *l, node *r, node *p) : value(v), left(l), right(r), parent(p), height(1) {}
+	bool last;
+	node(value_type v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p), height(1), last(e) {}
 	~node() {}
 };
 
@@ -108,7 +109,12 @@ public:
 	}
 //	const_iterator begin() const {}
 	iterator end() {
-		// iterator temp(_root);
+		if (_size == 0)
+			return iterator(_root);
+		node_type * temp = _root;
+		while(temp && temp->right)
+			temp = temp->right;
+		return iterator(temp);
 		// while (!)
 	}
 // const_iterator end() const;
@@ -178,9 +184,10 @@ private:
 			print(start->left);
 			std::cout << start->value.first << '_' << start->value.second << "  " << start->height;
 			if (start->parent)
-				std::cout << " p:" << start->parent->value.first;
+				std::cout << " p:" << start->parent->value.first << ' ';
 			else
 				std::cout << " root";
+			std::cout << " last:" << start->last;
 			std::cout << std::endl;
 			print(start->right);
 		}
@@ -188,11 +195,16 @@ private:
 
 	node_type* new_node(const value_type& val, node_type *parent) {
 		node_type *temp = _alloc_type.allocate(1);
-		_alloc_type.construct(temp, node_type(val, parent, NULL, NULL));
+		_alloc_type.construct(temp, node_type(val, NULL, NULL, parent, !_root ? true : false));
+		/*
+		std::cerr << temp->last << "-KKKOKOKKO\n";
+		temp->last = true;
+		temp->parent = parent;
 		temp->right = NULL;
 		temp->left = NULL;
-		temp->parent = parent;
 		temp->height = 1;
+		temp->end = false;
+		*/
 		if (DEBUG) std::cerr << "new_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
 		//node<value_type> 
 	/*
@@ -355,15 +367,7 @@ private:
 
 /*
 
-
-
 node<pair<const int, int> > *
-
-
 ft::pair<const int, int> *
-
-
-
-
 
 */
