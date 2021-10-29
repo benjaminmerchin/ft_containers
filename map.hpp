@@ -42,7 +42,7 @@ public:
 	typedef Compare                                               key_compare;
 	typedef node<value_type>                                      node_type;
 	class value_compare {
-		protected:
+		public: //fix this
 			Compare comp;
 			value_compare (Compare c) : comp(c) {}
 		public:
@@ -86,28 +86,34 @@ public:
 	explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _key_compare(comp), _size(0), _root(NULL) {}
 	//range (2)
 	template <class InputIterator>
-	map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _key_compare(comp), _size(0), _root(NULL) {
-		(void)first;
-		(void)last;
-	}
+	map (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _alloc_type(alloc), _key_compare(comp), _size(0), _root(NULL) {insert(first, last);}
 	//copy (3)
-	map (const map& x) : _alloc_type(x._alloc_type), _key_compare(x._key_compare), _size(0), _root(NULL) {}
+	map (const map& x) : _alloc_type(x._alloc_type), _key_compare(x._key_compare), _size(0), _root(NULL) {*this = x;}
 	~map () {clear_from_node(_root);}
 
 	map& operator= (const map& x) {
-		(void)x;
+		clear_from_node(_root);
+		insert(x.begin(), x.end());
+		return *this;
 	}
 
 //ITERATORS
 	iterator begin() {
 		if (_size == 0)
-			return iterator(_root); //pb ?
+			return iterator(_root);
 		node_type * temp = _root;
 		while (temp && temp->left)
 			temp = temp->left;
 		return iterator(temp);
 	}
-//	const_iterator begin() const {}
+	const_iterator begin() const {
+		if (_size == 0)
+			return const_iterator(_root);
+		node_type * temp = _root;
+		while (temp && temp->left)
+			temp = temp->left;
+		return const_iterator(temp);
+	}
 	iterator end() {
 		if (_size == 0)
 			return iterator(_root);
@@ -116,7 +122,14 @@ public:
 			temp = temp->right;
 		return iterator(temp);
 	}
-// const_iterator end() const;
+	const_iterator end() const {
+		if (_size == 0)
+			return const_iterator(_root);
+		node_type * temp = _root;
+		while(temp && !temp->last)
+			temp = temp->right;
+		return const_iterator(temp);
+	}
 // reverse_iterator rbegin();
 // const_reverse_iterator rbegin() const;
 // reverse_iterator rend();
@@ -128,26 +141,32 @@ public:
 	size_type max_size() const {return _alloc_type.max_size();}
 
 //ELEMENT ACCESS
-// mapped_type& operator[] (const key_type& k);
+	mapped_type& operator[] (const key_type& k);
 
 //MODIFIERS
 // insert
+	pair<iterator,bool> insert (const value_type& val) {
+		if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
 
-pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const key_type,mapped_type> 
-	node_type *temp = _root;
-	(void)val;
-	(void)temp;
-	if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
-	_root = insert_node_check_root(val, _root);
-	
-	return pair<iterator,bool>(NULL, true);
-}
+		size_t backup = _size;
+		_root = insert_node_check_root(val, _root);
+		return pair<iterator,bool>(NULL, backup != _size); //find une fois code
+	}
+	iterator insert (iterator position, const value_type& val) {
+		(void)position;
+		return iterator(insert_node_check_root(val, _root));
+	}
+	template <class InputIterator>
+	void insert (InputIterator first, InputIterator last) {
+		for (;first != last; first++)
+			insert(*first);
+	}
 // erase
-size_type erase (const key_type& k) {
-	size_type backup = _size;
-	_root = delete_node(_root, k);
-	return backup - _size;
-}
+	size_type erase (const key_type& k) {
+		size_type backup = _size;
+		_root = delete_node(_root, k);
+		return backup - _size;
+	}
 // swap
 	void clear() {
 		clear_from_node(_root);
@@ -155,7 +174,7 @@ size_type erase (const key_type& k) {
 
 //OBSERVERS
 	key_compare key_comp() const {return _key_compare;}
-	value_compare value_comp() const {return (value_compare(this->_key_compare));}
+	value_compare value_comp() const {return (value_compare(_key_compare));}
 
 //OPERATIONS
 // iterator find (const key_type& k);
@@ -252,9 +271,9 @@ private:
 			if(DEBUG) cerr<<"                      GENERATING LAST\n";
 			_root = new_node(val, NULL);
 			node_type *last = new_node(val, _root); //dummy value in the last node
+			_size--;
 			_root->right = last;
 			last->last = true;
-			_size++;
 			std::cerr << _root->last << ' ' << _root->right->last << std::endl;
 			return _root;
 		}
@@ -263,7 +282,6 @@ private:
 			_root->parent = new_root;
 			new_root->right = _root;
 			_root = new_root;
-			_size++;
 			return _root;
 		}
 		return insert_node(val, current, parent);
@@ -277,7 +295,6 @@ private:
 			current->parent = to_insert;
 			to_insert->right = current;
 			current = to_insert;
-			_size++;
 			return current;
 		}
 		if (_key_compare(val.first, current->value.first))
@@ -360,6 +377,7 @@ private:
 				if (DEBUG) std::cerr << "del_node: " << current->value.first << ' ' << current->value.second << std::endl;
 				_alloc_type.destroy(current);
 				_alloc_type.deallocate(current, 1);
+				_size--;
 				/*
 				node_type *temp = min_value_node(current->right);
 				current->value = temp->value;
@@ -383,10 +401,15 @@ private:
 			clear_from_node(current->right);
 			_alloc_type.destroy(current);
 			_alloc_type.deallocate(current, 1);
-			_size--;
+			if (_size > 0)
+				_size--;
 			if (current == _root)
 				_root = NULL;
 		}
+	}
+
+	node_type* position_of_a_key(const key_type& key) {
+		(void)key;
 	}
 
 };

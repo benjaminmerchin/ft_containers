@@ -561,10 +561,10 @@ int main() {
 	//pair_constructor();
 
 	/*
-	*/
 	map_std();
 	test_tree();
 	std::cout << "---------------------------------\n";
+	*/
 	NS::map<int, int> a;
 	a.insert(NS::pair<int,int>(5, 104));
 	a.insert(NS::pair<int,int>(1, 103));
@@ -605,12 +605,38 @@ ft::pair<const int, int>
 	}
 	*/
 	std::cout << "---------------------------------\n";
+	
 	NS::map<int, int>::iterator it = a.begin();
 	NS::map<int, int>::iterator it_end = a.end();
 	std::cout << "size: " << a.size() << std::endl;
 	//std::cout << it->first << '@' << it_end->first;
 	for (;it != it_end; it++) {
 		std::cout << it->first << ' ';
+	}
+	std::cout << std::endl;
+
+	std::cout << "---------------------------------\n";
+	NS::map<int, int> b;
+	b = a;
+	NS::map<int, int>::iterator it_b = b.begin();
+	NS::map<int, int>::iterator it_end_b = b.end();
+	std::cout << "size: " << b.size() << std::endl;
+	//std::cout << it->first << '@' << it_end->first;
+	/*
+	std::cout << it_b->first << ' ';
+	it_b++;
+	std::cout << it_b->first << ' ';
+	it_b++;
+	std::cout << it_b->first << ' ';
+	it_b++;
+	std::cout << it_b->first << ' ';
+	it_b++;
+	std::cout << it_b->first << ' ';
+	it_b++;
+	std::cout << it_b->first << ' ';
+	*/
+	for (;it_b != it_end_b; it_b++) {
+		std::cout << it_b->first << ' ';
 	}
 	std::cout << std::endl;
 	return 0;
