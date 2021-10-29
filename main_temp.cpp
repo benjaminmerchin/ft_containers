@@ -566,13 +566,16 @@ int main() {
 	test_tree();
 	std::cout << "---------------------------------\n";
 	NS::map<int, int> a;
-	a.insert(NS::pair<int,int>(2, 104));
+	a.insert(NS::pair<int,int>(5, 104));
 	a.insert(NS::pair<int,int>(1, 103));
-	a.insert(NS::pair<int,int>(3, 100));
-	a.insert(NS::pair<int,int>(4, 106));
+	a.insert(NS::pair<int,int>(8, 100));
+	a.insert(NS::pair<int,int>(6, 100));
+	a.insert(NS::pair<int,int>(11, 106));
+	a.insert(NS::pair<int,int>(-100, 106));
 
 	a.print_all();
 
+	/*
 	a.erase(2);
 	a.erase(3);
 	a.erase(1);
@@ -589,7 +592,6 @@ int main() {
 	NS::map<int, int>::iterator it = a.begin();
 	std::cout << it->first << std::endl;
 	//++it;
-	/*
 ft::map_iterator<ft::pair<const int, int>, ft::node<ft::pair<const int, int> > *>::value_type
 ft::pair<const int, int>
 

@@ -139,7 +139,7 @@ pair<iterator,bool> insert (const value_type& val) { //value_type : pair<const k
 	(void)val;
 	(void)temp;
 	if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
-	_root = insert_node(val, _root);
+	_root = insert_node_check_root(val, _root);
 	
 	return pair<iterator,bool>(NULL, true);
 }
@@ -179,23 +179,25 @@ size_type erase (const key_type& k) {
 
 private:
 
-	void print(node_type *start) {
+	void print(node_type *start, std::string path = "") {
+		/*if (start && start->last)
+			return;*/
 		if (start) {
-			print(start->left);
-			std::cout << start->value.first << '_' << start->value.second << "  " << start->height;
+			print(start->left, path + "L");
+			std::cout << path << ' ' << start->value.first << '_' << start->value.second;
 			if (start->parent)
 				std::cout << " p:" << start->parent->value.first << ' ';
 			else
 				std::cout << " root";
 			std::cout << " last:" << start->last;
 			std::cout << std::endl;
-			print(start->right);
+			print(start->right, path + "R");
 		}
 	}
 
 	node_type* new_node(const value_type& val, node_type *parent) {
 		node_type *temp = _alloc_type.allocate(1);
-		_alloc_type.construct(temp, node_type(val, NULL, NULL, parent, !_root ? true : false));
+		_alloc_type.construct(temp, node_type(val, NULL, NULL, parent, false));
 		/*
 		std::cerr << temp->last << "-KKKOKOKKO\n";
 		temp->last = true;
@@ -247,9 +249,39 @@ private:
 		return current;
 	}
 
-	node_type* insert_node(const value_type& val, node_type *current, node_type *parent = NULL) {
+	node_type* insert_node_check_root(const value_type& val, node_type *current, node_type *parent = NULL) {
+		if (!_root) {
+			if(DEBUG) cerr<<"                      GENERATING LAST\n";
+			_root = new_node(val, NULL);
+			node_type *last = new_node(val, _root); //dummy value in the last node
+			_root->right = last;
+			last->last = true;
+			_size++;
+			std::cerr << _root->last << ' ' << _root->right->last << std::endl;
+			return _root;
+		}
+		if (_root->last) {
+			node_type *new_root = new_node(val, NULL);
+			_root->parent = new_root;
+			new_root->right = _root;
+			_root = new_root;
+			_size++;
+			return _root;
+		}
+		return insert_node(val, current, parent);
+	}
+
+	node_type* insert_node(const value_type& val, node_type *current, node_type *parent) {
 		if (!current)
 			return new_node(val, parent);
+		if (current->last) {
+			node_type *to_insert = new_node(val, NULL);
+			current->parent = to_insert;
+			to_insert->right = current;
+			current = to_insert;
+			_size++;
+			return current;
+		}
 		if (_key_compare(val.first, current->value.first))
 			current->left = insert_node(val, current->left, current);
 		else if (_key_compare(current->value.first, val.first))
