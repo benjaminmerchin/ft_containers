@@ -34,8 +34,13 @@ public:
 	pointer operator->() const {return &(operator*());}
 	operator map_iterator<const T, node_type>() const {return map_iterator<const T, node_type>(_node);}
 
+	template<typename U>
+	bool operator==(const map_iterator<U, node_type> other) {return _node == other._node;}
+	template<typename U>
+	bool operator!=(const map_iterator<U, node_type> other) {return _node != other._node;}
+
 private:
-	void increase() { //revoir
+	void increase() {
 		if (_node->right) {
 			_node = _node->right;
 			while (_node->left)
@@ -44,15 +49,14 @@ private:
 		else {
 			node_type temp = _node;
 			_node = _node->parent;
-			while (temp->left != temp) {
+			while (_node->left != temp) {
 				temp = _node;
 				_node = _node->parent;
 			}
-			(void)temp;
 		}
 	}
 
-	void decrease() { //revoir
+	void decrease() {
 		if (_node->left) {
 			_node = _node->left;
 			while (_node->right)
@@ -61,13 +65,15 @@ private:
 		else {
 			node_type temp = _node;
 			_node = _node->parent;
-			while (temp->right != temp) {
+			while (_node->right != temp) {
 				temp = _node;
 				_node = _node->parent;
 			}
 		}
 	}
+
 };
+
 
 }
 

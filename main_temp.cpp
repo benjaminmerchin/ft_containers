@@ -572,7 +572,10 @@ int main() {
 	a.insert(NS::pair<int,int>(6, 100));
 	a.insert(NS::pair<int,int>(11, 106));
 	a.insert(NS::pair<int,int>(-100, 106));
-
+	a.insert(NS::pair<int,int>(8, 106)); //already inserted
+	/*
+	*/
+	a.erase(5);
 	a.print_all();
 
 	/*
@@ -589,9 +592,6 @@ int main() {
 	a.print_all();
 
 
-	NS::map<int, int>::iterator it = a.begin();
-	std::cout << it->first << std::endl;
-	//++it;
 ft::map_iterator<ft::pair<const int, int>, ft::node<ft::pair<const int, int> > *>::value_type
 ft::pair<const int, int>
 
@@ -604,5 +604,14 @@ ft::pair<const int, int>
 		a.erase(2);
 	}
 	*/
+	std::cout << "---------------------------------\n";
+	NS::map<int, int>::iterator it = a.begin();
+	NS::map<int, int>::iterator it_end = a.end();
+	std::cout << "size: " << a.size() << std::endl;
+	//std::cout << it->first << '@' << it_end->first;
+	for (;it != it_end; it++) {
+		std::cout << it->first << ' ';
+	}
+	std::cout << std::endl;
 	return 0;
 }

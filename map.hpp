@@ -93,6 +93,7 @@ public:
 	//copy (3)
 	map (const map& x) : _alloc_type(x._alloc_type), _key_compare(x._key_compare), _size(0), _root(NULL) {}
 	~map () {clear_from_node(_root);}
+
 	map& operator= (const map& x) {
 		(void)x;
 	}
@@ -105,17 +106,15 @@ public:
 		while (temp && temp->left)
 			temp = temp->left;
 		return iterator(temp);
-		//return (iterator(_root));
 	}
 //	const_iterator begin() const {}
 	iterator end() {
 		if (_size == 0)
 			return iterator(_root);
 		node_type * temp = _root;
-		while(temp && temp->right)
+		while(temp && !temp->last)
 			temp = temp->right;
 		return iterator(temp);
-		// while (!)
 	}
 // const_iterator end() const;
 // reverse_iterator rbegin();
@@ -180,8 +179,6 @@ size_type erase (const key_type& k) {
 private:
 
 	void print(node_type *start, std::string path = "") {
-		/*if (start && start->last)
-			return;*/
 		if (start) {
 			print(start->left, path + "L");
 			std::cout << path << ' ' << start->value.first << '_' << start->value.second;
@@ -189,7 +186,8 @@ private:
 				std::cout << " p:" << start->parent->value.first << ' ';
 			else
 				std::cout << " root";
-			std::cout << " last:" << start->last;
+			if (start->last)
+				std::cout << " last";
 			std::cout << std::endl;
 			print(start->right, path + "R");
 		}
@@ -225,7 +223,7 @@ private:
 
 	int height(node_type *node) {
 		if (!node)
-			return 0;
+			return 0;           
 		return node->height;
 	}
 
@@ -319,7 +317,7 @@ private:
 	}
 
 	node_type* delete_node(node_type *current, const key_type& key) {
-		if (!current)
+		if (!current || current->last)
 			return current;
 		if (_key_compare(key, current->value.first))
 			current->left = delete_node(current->left, key);
