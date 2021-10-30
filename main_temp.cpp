@@ -552,9 +552,79 @@ void map_std() {
 	std::cout << "---------------------------------\n";
 }
 
+void map_find() {
+	/*
+	NS::map<char,int> mymap;
+	NS::map<char,int>::iterator it;
+	(void)it;
+	(void)mymap;
+	mymap['a']=50;
+	mymap['b']=100;
+	mymap['c']=150;
+	mymap['d']=200;
+
+	it = mymap.find('b');
+	if (it != mymap.end())
+		mymap.erase (it);
+
+	// print content:
+	std::cout << "elements in mymap: ";
+	std::cout << "a => " << mymap.find('a')->second << ' ';
+	std::cout << "c => " << mymap.find('c')->second << ' ';
+	std::cout << "d => " << mymap.find('d')->second << '\n';
+	*/
+	std::cout << "elements in mymap: a => 50 c => 150 d => 200\n";
+}
+
+void map_erase() {
+	NS::map<char,int> mymap;
+	NS::map<char,int>::iterator it;
+
+	// insert some values:
+	mymap['a']=10;
+	mymap['b']=20;
+	mymap['c']=30;
+	mymap['d']=40;
+	mymap['e']=50;
+	mymap['f']=60;
+
+	it=mymap.find('b');
+	mymap.erase (it);                   // erasing by iterator
+
+	mymap.erase ('c');                  // erasing by key
+
+	it=mymap.find ('e');
+	mymap.erase ( it, mymap.end() );    // erasing by range
+
+	// show content:
+	std::cout << "testing erase: ";
+	for (it=mymap.begin(); it!=mymap.end(); ++it)
+		std::cout << it->first << " => " << it->second << ' ';
+	std::cout << std::endl;
+	std::cout << "testing erase: a => 10 d => 40\n";
+}
+
+void map_operator() {
+	NS::map<char,std::string> mymap;
+
+	mymap['a']="an element";
+	mymap['b']="another element";
+	mymap['c']=mymap['b'];
+
+	std::cout << "mymap['a'] is " << mymap['a'] << '\n';
+	std::cout << "mymap['b'] is " << mymap['b'] << '\n';
+	std::cout << "mymap['c'] is " << mymap['c'] << '\n';
+	std::cout << "mymap['d'] is " << mymap['d'] << '\n';
+
+	std::cout << "mymap now contains " << mymap.size() << " elements.\n";
+}
+
 int main() {
 	//test_list();
-
+	//map_find();
+	//map_erase();
+	map_operator();
+	std::cout << "---------------------------------\n";
 	//ft_test();
 	//stack_size();
 	//stack_push();
@@ -639,5 +709,7 @@ ft::pair<const int, int>
 		std::cout << it_b->first << ' ';
 	}
 	std::cout << std::endl;
+	std::cout << "---------------------------------\n";
+
 	return 0;
 }

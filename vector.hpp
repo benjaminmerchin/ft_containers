@@ -8,7 +8,6 @@
 #include "reverse_iterator.hpp"
 #include "utils.hpp"
 
-//reuse the functions from the allocator_traits: allocate, deallocate, construct, destroy & max_size
 //vector is a sequence container that encapsulates dynamic size arrays
 namespace ft {
 

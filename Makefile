@@ -1,7 +1,7 @@
 NAME	=	ft_containers
 NAME_STD=	std_containers
 SEED	=	123
-CC		=	clang++
+CC		=	clang++#--verbose
 OBJDIR	=	objects
 SRC		=	main.cpp
 SRC_TEST=	main_temp.cpp

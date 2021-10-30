@@ -30,14 +30,15 @@ public:
 	map_iterator& operator-- (void) {decrease(); return *this;}
 	map_iterator operator-- (int) {map_iterator it = *this; --(*this); return *this;}
 
+	node_type get_node() {return _node;}
 	reference operator*() const {return _node->value;}
 	pointer operator->() const {return &(operator*());}
 	operator map_iterator<const T, node_type>() const {return map_iterator<const T, node_type>(_node);}
 
-	template<typename U>
-	bool operator==(const map_iterator<U, node_type> other) {return _node == other._node;}
-	template<typename U>
-	bool operator!=(const map_iterator<U, node_type> other) {return _node != other._node;}
+	//template<typename U>
+	bool operator==(const map_iterator<T, node_type> other) {return _node == other._node;}
+	//template<typename U>
+	bool operator!=(const map_iterator<T, node_type> other) {return _node != other._node;}
 
 private:
 	void increase() {

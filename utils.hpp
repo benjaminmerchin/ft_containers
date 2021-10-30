@@ -114,6 +114,19 @@ bool equal ( InputIterator1 first1, InputIterator1 last1, InputIterator2 first2 
 	return true;
 }
 
+//https://www.cplusplus.com/reference/functional/binary_function/
+template <class Arg1, class Arg2, class Result>
+struct binary_function {
+	typedef Arg1 first_argument_type;
+	typedef Arg2 second_argument_type;
+	typedef Result result_type;
+};
+
+//https://www.cplusplus.com/reference/functional/less/
+template <class T> struct less : binary_function <T,T,bool> {
+	bool operator() (const T& x, const T& y) const {return x<y;}
+};
+
 }
 
 #endif
