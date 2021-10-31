@@ -14,15 +14,15 @@
 
 namespace ft {
 
-template <typename value_type>
+template <typename U>
 struct node {
-	value_type value;
+	U value;
 	node *left;
 	node *right;
 	node *parent;
 	int height;
 	bool last;
-	node(value_type v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p), height(1), last(e) {}
+	node(U v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p), height(1), last(e) {}
 	~node() {}
 };
 
@@ -93,6 +93,7 @@ public:
 	~map () {clear_from_node(_root);}
 
 	map& operator= (const map& x) {
+		if (DEBUG) std::cerr << "BBBBB\n";
 		clear_from_node(_root);
 		insert(x.begin(), x.end());
 		return *this;
@@ -143,23 +144,31 @@ public:
 
 //ELEMENT ACCESS
 	mapped_type& operator[] (const key_type& k) {
+		if (DEBUG) std::cerr << k << ' ' << mapped_type() << " operator[]\n";
 		node_type *temp = position_of_a_key(k);
 		if (temp)
 			return temp->value.second;
+		insert(value_type(k,mapped_type()));
+		return position_of_a_key(k)->value.second;
+		/*
 		return insert(value_type(k,mapped_type())).first->second;
+		*/
 	}
 
 //MODIFIERS
 	pair<iterator,bool> insert (const value_type& val) {
 		if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
 
+		//std::cerr << "ICI\n";
+
 		size_t backup = _size;
-		//_root = insert_node_check_root(val, _root);
-		return (pair<iterator,bool>(insert_node_check_root(val, _root), backup != _size));
+		insert_node_check_root(val, _root);
+		return (pair<iterator,bool>(position_of_a_key(val.first), backup != _size));
 	}
 	iterator insert (iterator position, const value_type& val) {
 		(void)position;
-		return iterator(insert_node_check_root(val, _root));
+		insert_node_check_root(val, _root);
+		return iterator(position_of_a_key(val.first));
 	}
 	template <class InputIterator>
 	void insert (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) {
@@ -208,13 +217,14 @@ public:
 		return end();
 	}
 	const_iterator find (const key_type& k) const {
-		node_type *temp = position_of_a_key(k);
+		node_type *temp = const_position_of_a_key(k);
 		if (temp)
 			return const_iterator(temp);
 		return end();
 	}
 	size_type count (const key_type& k) const {//1 if found, 0 otherwise, use find
-		if (position_of_a_key(k))
+		node_type *temp = const_position_of_a_key(k);
+		if (temp)
 			return 1;
 		return 0;
 	}
@@ -271,6 +281,13 @@ private:
 				std::cout << " p:" << start->parent->value.first << ' ';
 			else
 				std::cout << " root";
+			if (start->left || start->right) {
+				std::cout << " ";
+				if (start->left)
+					std::cout << "l";
+				if (start->right)
+					std::cout << "r";
+			}
 			if (start->last)
 				std::cout << " last";
 			std::cout << std::endl;
@@ -332,10 +349,12 @@ private:
 		return current;
 	}
 
+	//void insert_node_check_root(const value_type& val, node_type *current, node_type *parent = NULL);
+
 	node_type* insert_node_check_root(const value_type& val, node_type *current, node_type *parent = NULL) {
 		if (!_root) {
-			if(DEBUG) std::cerr << "                      GENERATING LAST\n";
 			_root = new_node(val, NULL);
+			if(DEBUG) std::cerr << "                      GENERATED LAST\n";
 			node_type *last = new_node(val, _root); //dummy value in the last node
 			_size--;
 			_root->right = last;
@@ -357,7 +376,8 @@ private:
 		if (!current)
 			return new_node(val, parent);
 		if (current->last) {
-			node_type *to_insert = new_node(val, NULL);
+			if(DEBUG) std::cerr << val.first << ' ' << val.second << ' ' << current->value.first << ' ' << parent->value.first << "\n";
+			node_type *to_insert = new_node(val, parent);
 			current->parent = to_insert;
 			to_insert->right = current;
 			current = to_insert;
@@ -474,7 +494,15 @@ private:
 		}
 	}
 
-	node_type* position_of_a_key(const key_type& key) { //passer en mode insert_node pour plus d'opti
+	node_type* position_of_a_key(const key_type& key) { //passer en mode insert_node pour plus d'opti car cette fonction est appelee souvent
+		iterator ite = end();
+		for (iterator it = begin(); it != ite; it++)
+			if (it->first == key)
+				return it.get_node();
+		return NULL;
+	}
+
+	node_type* const_position_of_a_key(const key_type& key) const { //passer en mode insert_node pour plus d'opti car cette fonction est appelee souvent
 		iterator ite = end();
 		for (iterator it = begin(); it != ite; it++)
 			if (it->first == key)
@@ -483,6 +511,28 @@ private:
 	}
 
 };
+
+//NON-MEMBER FUNCTION OVERLOADS
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator== (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		if (lhs.size() != rhs.size())
+			return false;
+		return equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!= (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {return !(lhs == rhs);}
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator< (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {
+		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+	}
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<= (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {return (lhs < rhs || lhs == rhs);}
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator> (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {return rhs < lhs;}
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>= (const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs) {return (lhs > rhs || lhs == rhs);}
+	template <class Key, class T, class Compare, class Alloc>
+	void swap (map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y) {x.swap(y);}
 
 }
 
@@ -494,4 +544,11 @@ int, foo<int>, std::__1::less<int>, std::__1::allocator<ft::pair<const int, foo<
 
 ft::map<>::operator[](char const&)
 char, int, std::__1::less<char>, std::__1::allocator<ft::pair<char const, int> > 
+
+
+const ft::map<>
+int, 
+std::__1::basic_string<char>, 
+ft::less<int>,
+std::__1::allocator<ft::pair<const int, std::__1::basic_string<char> > > 
 */

@@ -23,4 +23,17 @@ Implelemter toutes les features meme depreciees de la version cpp98
 - produce one binary with only your containers and one with the same testing with STL containers
 - additional functions than the ones in std containers must be private or protected
 
+
+
+./cmp_one srcs/map/bounds.cpp
+./cmp_one srcs/map/comp.cpp
+./cmp_one srcs/map/erase.cpp
+./cmp_one srcs/map/find_count.cpp
+./cmp_one srcs/map/insert.cpp
+./cmp_one srcs/map/ite_arrow.cpp
+./cmp_one srcs/map/rite.cpp
+./cmp_one srcs/map/rite_arrow.cpp
+
+
+
 -->

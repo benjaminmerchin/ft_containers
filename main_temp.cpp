@@ -553,7 +553,6 @@ void map_std() {
 }
 
 void map_find() {
-	/*
 	NS::map<char,int> mymap;
 	NS::map<char,int>::iterator it;
 	(void)it;
@@ -564,21 +563,46 @@ void map_find() {
 	mymap['d']=200;
 
 	it = mymap.find('b');
+	/*
 	if (it != mymap.end())
 		mymap.erase (it);
+	*/
 
 	// print content:
 	std::cout << "elements in mymap: ";
 	std::cout << "a => " << mymap.find('a')->second << ' ';
 	std::cout << "c => " << mymap.find('c')->second << ' ';
 	std::cout << "d => " << mymap.find('d')->second << '\n';
-	*/
 	std::cout << "elements in mymap: a => 50 c => 150 d => 200\n";
+}
+
+void map_count() {
+	/*
+	NS::map<char,int> mymap;
+	char c;
+
+	mymap ['a']=101;
+	mymap ['c']=202;
+	mymap ['f']=303;
+
+	for (c='a'; c<'h'; c++)
+	{
+		std::cout << c;
+		if (mymap.count(c)>0)
+			std::cout << "0 ";
+		else 
+			std::cout << "1 ";
+	}
+	std::cout << std::endl;
+	std::cout << "a0 b1 c0 d1 e1 f0 g1 \n";
+	*/
 }
 
 void map_erase() {
 	NS::map<char,int> mymap;
 	NS::map<char,int>::iterator it;
+	(void)it;
+	(void)mymap;
 
 	// insert some values:
 	mymap['a']=10;
@@ -587,8 +611,11 @@ void map_erase() {
 	mymap['d']=40;
 	mymap['e']=50;
 	mymap['f']=60;
+	mymap.print_all();
+	std::cout << "size: " << mymap.size() << std::endl;
 
 	it=mymap.find('b');
+	/*
 	mymap.erase (it);                   // erasing by iterator
 
 	mymap.erase ('c');                  // erasing by key
@@ -597,6 +624,7 @@ void map_erase() {
 	mymap.erase ( it, mymap.end() );    // erasing by range
 
 	// show content:
+	*/
 	std::cout << "testing erase: ";
 	for (it=mymap.begin(); it!=mymap.end(); ++it)
 		std::cout << it->first << " => " << it->second << ' ';
@@ -621,9 +649,10 @@ void map_operator() {
 
 int main() {
 	//test_list();
-	//map_find();
-	//map_erase();
-	map_operator();
+	map_find();
+	//map_count();
+	map_erase();
+	//map_operator();
 	std::cout << "---------------------------------\n";
 	//ft_test();
 	//stack_size();
@@ -635,6 +664,8 @@ int main() {
 	test_tree();
 	std::cout << "---------------------------------\n";
 	*/
+	//ICI
+	/* 
 	NS::map<int, int> a;
 	a.insert(NS::pair<int,int>(5, 104));
 	a.insert(NS::pair<int,int>(1, 103));
@@ -643,10 +674,9 @@ int main() {
 	a.insert(NS::pair<int,int>(11, 106));
 	a.insert(NS::pair<int,int>(-100, 106));
 	a.insert(NS::pair<int,int>(8, 106)); //already inserted
-	/*
-	*/
 	a.erase(5);
 	a.print_all();
+	*/
 
 	/*
 	a.erase(2);
@@ -674,6 +704,8 @@ ft::pair<const int, int>
 		a.erase(2);
 	}
 	*/
+	/*
+	//ICI
 	std::cout << "---------------------------------\n";
 	
 	NS::map<int, int>::iterator it = a.begin();
@@ -691,25 +723,13 @@ ft::pair<const int, int>
 	NS::map<int, int>::iterator it_b = b.begin();
 	NS::map<int, int>::iterator it_end_b = b.end();
 	std::cout << "size: " << b.size() << std::endl;
-	//std::cout << it->first << '@' << it_end->first;
-	/*
-	std::cout << it_b->first << ' ';
-	it_b++;
-	std::cout << it_b->first << ' ';
-	it_b++;
-	std::cout << it_b->first << ' ';
-	it_b++;
-	std::cout << it_b->first << ' ';
-	it_b++;
-	std::cout << it_b->first << ' ';
-	it_b++;
-	std::cout << it_b->first << ' ';
-	*/
+
 	for (;it_b != it_end_b; it_b++) {
 		std::cout << it_b->first << ' ';
 	}
 	std::cout << std::endl;
 	std::cout << "---------------------------------\n";
+	*/
 
 	return 0;
 }
