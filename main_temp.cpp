@@ -601,35 +601,40 @@ void map_count() {
 void map_erase() {
 	NS::map<char,int> mymap;
 	NS::map<char,int>::iterator it;
-	(void)it;
-	(void)mymap;
 
 	// insert some values:
-	mymap['a']=10;
+	for (int i = 0; i < 10; i++)
+		mymap.insert(NS::pair<char, int>(i + 'a', i * 10));
+	/*mymap['a']=10;
 	mymap['b']=20;
 	mymap['c']=30;
 	mymap['d']=40;
 	mymap['e']=50;
-	mymap['f']=60;
+	mymap['f']=60;*/
 	mymap.print_all();
-	std::cout << "size: " << mymap.size() << std::endl;
-
 	it=mymap.find('b');
-	/*
 	mymap.erase (it);                   // erasing by iterator
 
 	mymap.erase ('c');                  // erasing by key
 
 	it=mymap.find ('e');
 	mymap.erase ( it, mymap.end() );    // erasing by range
+	/*
+	*/
 
 	// show content:
-	*/
 	std::cout << "testing erase: ";
 	for (it=mymap.begin(); it!=mymap.end(); ++it)
 		std::cout << it->first << " => " << it->second << ' ';
 	std::cout << std::endl;
 	std::cout << "testing erase: a => 10 d => 40\n";
+
+	/*
+	NS::map<char,int>::const_iterator cit = mymap.begin();
+	std::cout << cit->first << std::endl;
+	cit++;
+	std::cout << cit->first << std::endl;
+	*/
 }
 
 void map_operator() {
@@ -647,13 +652,53 @@ void map_operator() {
 	std::cout << "mymap now contains " << mymap.size() << " elements.\n";
 }
 
+void map_empty() {
+	NS::map<char,int> mymap;
+
+	mymap['a']=10;
+	mymap['b']=20;
+	mymap['c']=30;
+
+	while (!mymap.empty())
+	{
+		std::cout << mymap.begin()->first << " => " << mymap.begin()->second << ' ';
+		mymap.erase(mymap.begin()); //error here
+	}
+	std::cout << std::endl;
+	std::cout << "a => 10 b => 20 c => 30\n";
+}
+
+void map_upper_bound() {
+	NS::map<char,int> mymap;
+	NS::map<char,int>::iterator itlow,itup;
+
+	mymap['a']=20;
+	mymap['b']=40;
+	mymap['c']=60;
+	mymap['d']=80;
+	mymap['e']=100;
+
+	itlow=mymap.lower_bound ('b');  // itlow points to b
+	itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+
+	mymap.erase(itlow,itup);        // erases [itlow,itup)
+
+	// print content:
+	for (NS::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+		std::cout << it->first << " => " << it->second << ' ';
+	std::cout << std::endl;
+	std::cout << "a => 20 e => 100 \n";
+}
+
 int main() {
 	//test_list();
 	map_find();
-	//map_count();
+	map_count();
 	map_erase();
 	//map_operator();
 	std::cout << "---------------------------------\n";
+	map_upper_bound();
+	map_empty();
 	//ft_test();
 	//stack_size();
 	//stack_push();

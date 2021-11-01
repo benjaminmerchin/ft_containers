@@ -7,22 +7,22 @@
 #include "pair.hpp"
 #include "tree.hpp"
 #include "map_iterator.hpp"
-#include "vector.hpp"
 #include "utils.hpp"
+#include "reverse_iterator.hpp"
 
 #define DEBUG 0
 
 namespace ft {
 
-template <typename U>
+template <typename V>
 struct node {
-	U value;
+	V value;
 	node *left;
 	node *right;
 	node *parent;
-	int height;
+//	int height;
 	bool last;
-	node(U v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p), height(1), last(e) {}
+	node(V v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p)/*, height(1)*/, last(e) {}
 	~node() {}
 };
 
@@ -42,8 +42,8 @@ public:
 	typedef Compare                                               key_compare;
 	typedef node<value_type>                                      node_type;
 	class value_compare {
-		//friend class map;
-		protected: //fix this
+		friend class map;
+		protected:
 			Compare comp;
 			value_compare (Compare c) : comp(c) {}
 		public:
@@ -176,7 +176,7 @@ public:
 			insert(*first);
 	}
 	void erase (iterator position) {
-		erase(position, ++position);
+		erase(position->first);
 	}
 	size_type erase (const key_type& k) {
 		size_type backup = _size;
@@ -184,8 +184,11 @@ public:
 		return backup - _size;
 	}
 	void erase (iterator first, iterator last) {
-		for (;first != last; first++)
-			delete_node(_root, first->first);
+		map<key_type, mapped_type> temp(first, last);
+		iterator it = temp.begin();
+		iterator ite = temp.end();
+		for (; it != ite; it++)
+			delete_node(_root, it->first);
 	}
 	void swap (map& x) {
 		node_allocator temp_alloc_type = _alloc_type;
@@ -237,7 +240,7 @@ public:
 	}
 	const_iterator lower_bound (const key_type& k) const {
 		const_iterator ite = end();
-		for (iterator it = begin(); it != ite; it++)
+		for (const_iterator it = begin(); it != ite; it++)
 			if (!_key_compare(it->first, k))
 				return const_iterator(it);
 		return ite;
@@ -251,7 +254,7 @@ public:
 	}
 	const_iterator upper_bound (const key_type& k) const {
 		const_iterator ite = end();
-		for (iterator it = begin(); it != ite; it++)
+		for (const_iterator it = begin(); it != ite; it++)
 			if (_key_compare(k, it->first))
 				return const_iterator(it);
 		return ite;		
@@ -321,20 +324,19 @@ private:
 		return temp;
 	}
 
+/*
 	int max(int a, int b) {return (a > b)? a : b;}
-
 	int height(node_type *node) {
 		if (!node)
 			return 0;           
 		return node->height;
 	}
-
 	int get_balance(node_type *node) {
 		if (!node)
 			return 0;
 		return height(node->left) - height(node->right);
 	}
-
+*/
 	node_type* min_value_node(node_type *node) {
 		node_type *current = node;
 		while (current->left != NULL)
@@ -390,9 +392,9 @@ private:
 		else
 			return current;
 
+/*
 		current->height = 1 + max(height(current->left), height(current->right));
 		//rotate here if neccessary
-/*
 		// Left Left Case
 		if (balance > 1 && getBalance(root->left) >= 0)
 			return rightRotate(root);
@@ -420,6 +422,7 @@ private:
 	}
 
 	node_type* delete_node(node_type *current, const key_type& key) {
+		//return current; //retirer
 		if (!current || current->last)
 			return current;
 		if (_key_compare(key, current->value.first))
@@ -446,6 +449,7 @@ private:
 					_alloc_type.destroy(temp2);
 					_alloc_type.deallocate(temp2, 1);
 					_size--;
+					//std::cerr << "uwuwuwuwuwuwu\n";
 				}
 			}
 			else {
@@ -474,9 +478,9 @@ private:
 			}
 		}
 
-		if (!current)
-			return current;
-		current->height = 1 + max(height(current->left), height(current->right));
+	//	if (!current)
+	//		return current;
+//		current->height = 1 + max(height(current->left), height(current->right));
 		//rotate here if necessary
 		return current;
 	}
@@ -503,8 +507,8 @@ private:
 	}
 
 	node_type* const_position_of_a_key(const key_type& key) const { //passer en mode insert_node pour plus d'opti car cette fonction est appelee souvent
-		iterator ite = end();
-		for (iterator it = begin(); it != ite; it++)
+		const_iterator ite = end();
+		for (const_iterator it = begin(); it != ite; it++)
 			if (it->first == key)
 				return it.get_node();
 		return NULL;
@@ -551,4 +555,18 @@ int,
 std::__1::basic_string<char>, 
 ft::less<int>,
 std::__1::allocator<ft::pair<const int, std::__1::basic_string<char> > > 
+
+
+
+
+
+
+
+const map_iterator<ft::pair<const char, int>, ft::node<ft::pair<const char, int> > *>
+
+
+
+
+
+
 */

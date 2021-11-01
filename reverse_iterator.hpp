@@ -56,8 +56,8 @@ public:
 	}
 
 	reference operator[](int index) {return *(_pointer - index - 1);}
-	pointer operator->() {return &(operator*());}
-	reference operator*() {
+	pointer operator->() const {return &(operator*());}
+	reference operator*() const {
 		iterator_type it = _pointer;
 		it--;
 		return *it;
