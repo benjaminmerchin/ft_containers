@@ -12,7 +12,7 @@ class vector_iterator {
 public:
 	typedef T value_type;
 	typedef std::random_access_iterator_tag iterator_category;
-	typedef __PTRDIFF_TYPE__ difference_type;
+	typedef std::ptrdiff_t difference_type;
 	typedef value_type* pointer;
 	typedef value_type& reference;
 
