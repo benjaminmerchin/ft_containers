@@ -26,6 +26,7 @@ all: ft std
 	@./$(NAME_STD) > $(NAME_STD).txt
 	@echo "${GREEN}Executing Program and Exporting Difference${RESET}"
 	@diff $(NAME_FT).txt $(NAME_STD).txt > diff.txt
+	@cat diff.txt
 
 bonus: all
 
