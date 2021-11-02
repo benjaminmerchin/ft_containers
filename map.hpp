@@ -1,11 +1,8 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <memory>
 #include <iostream>
-#include <string>
 #include "pair.hpp"
-#include "tree.hpp"
 #include "map_iterator.hpp"
 #include "utils.hpp"
 #include "reverse_iterator.hpp"
@@ -188,7 +185,7 @@ public:
 		iterator it = temp.begin();
 		iterator ite = temp.end();
 		for (; it != ite; it++)
-			delete_node(_root, it->first);
+			_root = delete_node(_root, it->first);
 	}
 	void swap (map& x) {
 		node_allocator temp_alloc_type = _alloc_type;

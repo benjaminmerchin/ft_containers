@@ -3,6 +3,7 @@
 #include "map.hpp"
 #include <vector>
 #include <map>
+#include <list>
 #include <iostream>
 #include <utility>
 
@@ -34,6 +35,24 @@ struct MyAlloc : std::allocator<type> {
 		delete [] ptr;
 	}
 };
+
+/*
+template <typename MAP, typename U>
+void	ft_erase(MAP &mp, U param)
+{
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	mp.erase(param);
+	printSize(mp);
+}
+
+template <typename MAP, typename U, typename V>
+void	ft_erase(MAP &mp, U param, V param2)
+{
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	mp.erase(param, param2);
+	printSize(mp);
+}
+*/
 
 void ft_insert() {
 	NS::vector<int> myvector (3,100);
@@ -690,15 +709,59 @@ void map_upper_bound() {
 	std::cout << "a => 20 e => 100 \n";
 }
 
+void map_marc_erase() {
+	/*
+	std::list<NS::pair<const int, std::string> > lst;
+	unsigned int lst_size = 10;
+	for (unsigned int i = 0; i < lst_size; ++i)
+		lst.push_back(NS::pair<const int, std::string>(i, std::string((lst_size - i), i + 65)));
+	NS::map<int, std::string> mp(lst.begin(), lst.end()); //10 elements
+	//printSize(mp);
+	*/
+	NS::map<int, int> mp; //10 elements
+	for (unsigned int i = 0; i < 10; ++i)
+		mp.insert(NS::pair<int, int>(i, i*10));
+	mp.print_all();
+	/*
+	*/
+	mp.erase(++mp.begin());
+
+	mp.erase(mp.begin());
+	mp.erase(--mp.end());
+
+	mp.erase(mp.begin(), ++mp.begin());
+	mp.print_all();
+	mp.erase(mp.begin(), ++(++(++mp.begin())));
+	mp.erase(--(--(--mp.end())), --mp.end());
+
+	mp[10] = 100;
+	mp[11] = 110;
+	//printSize(mp);
+	mp.erase(--(--(--mp.end())), mp.end());
+
+	mp.print_all();
+
+	mp[12] = 120;
+	mp[13] = 130;
+	mp[14] = 140;
+	mp[15] = 150;
+	//printSize(mp);
+	mp.erase(mp.begin(), mp.end());	
+	mp.print_all();
+	/*
+	*/
+}
+
 int main() {
+	map_marc_erase();
 	//test_list();
-	map_find();
-	map_count();
-	map_erase();
+	//map_find();
+	//map_count();
+	//map_erase();
 	//map_operator();
 	std::cout << "---------------------------------\n";
-	map_upper_bound();
-	map_empty();
+	//map_upper_bound();
+	//map_empty();
 	//ft_test();
 	//stack_size();
 	//stack_push();
