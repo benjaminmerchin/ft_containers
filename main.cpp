@@ -380,9 +380,10 @@ void test_list() {
 	ft_swap();
 	std::cout << "foo contains: 10 10 10 10 10 10" << std::endl;
 
-
+#if __APPLE__
 	std::cout << "is_integral w/ float: " << std::boolalpha << NS::is_integral<float>::value << std::endl; 
 	std::cout << "is_integral w/ int: " << std::boolalpha << NS::is_integral<int>::value << std::endl;
+#endif
 
 	ft_reverse_iterator();
 	std::cout << "myvector: 9 8 7 6 5 4 3 2 1 0" << std::endl;
