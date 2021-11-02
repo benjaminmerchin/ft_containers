@@ -36,6 +36,11 @@ public:
 	node_pointer get_node() const {return _node;}
 	operator map_iterator<const T, node_pointer>() const {return map_iterator<const T, node_pointer>(_node);}
 
+	template<typename it2>
+	bool operator==(const map_iterator<it2, node_pointer>& b) const {return _node == b.get_node();}
+	template<typename it2>
+	bool operator!=(const map_iterator<it2, node_pointer>& b) const {return _node != b.get_node();}
+
 private:
 	void increase() {
 		if (_node->right) {
@@ -68,19 +73,6 @@ private:
 			}
 		}
 	}
-
-	template<typename it1, typename it2>
-	friend bool operator==(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() == b.get_node();}
-	template<typename it1, typename it2>
-	friend bool operator!=(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() != b.get_node();}
-	template<typename it1, typename it2>
-	friend bool operator<(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() < b.get_node();}
-	template<typename it1, typename it2>
-	friend bool operator<=(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() <= b.get_node();}
-	template<typename it1, typename it2>
-	friend bool operator>(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() > b.get_node();}
-	template<typename it1, typename it2>
-	friend bool operator>=(const map_iterator<it1, node_pointer>& a, const map_iterator<it2, node_pointer>& b) {return a.get_node() >= b.get_node();}
 
 };
 
