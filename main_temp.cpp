@@ -3,6 +3,7 @@
 #include "map.hpp"
 #include <vector>
 #include <map>
+#include <stack>
 #include <list>
 #include <iostream>
 #include <utility>
@@ -23,7 +24,6 @@ void	printSize(NS::vector<T> const &vct, bool print_content = 1)
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
 	}
-	std::cout << "###############################################" << std::endl;
 }
 
 template<typename type>
@@ -35,24 +35,6 @@ struct MyAlloc : std::allocator<type> {
 		delete [] ptr;
 	}
 };
-
-/*
-template <typename MAP, typename U>
-void	ft_erase(MAP &mp, U param)
-{
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	mp.erase(param);
-	printSize(mp);
-}
-
-template <typename MAP, typename U, typename V>
-void	ft_erase(MAP &mp, U param, V param2)
-{
-	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
-	mp.erase(param, param2);
-	printSize(mp);
-}
-*/
 
 void ft_insert() {
 	NS::vector<int> myvector (3,100);
@@ -156,7 +138,6 @@ void ft_reverse_iterator_relational_operator() {
 	std::cout << "myvector:";
 	while (rev_from != rev_until)
 		std::cout << ' ' << *rev_from++;
-	//std::cout << '\n';
 
 	std::reverse_iterator<iter_type> rev_it;
 	rev_it = 3 + myvector.rbegin();
@@ -285,12 +266,6 @@ void ft_test() {
 		std::cout << characters[i] << ' ';
 	std::cout << '\n';
  
-    /*
-	characters.assign({'C', '+', '+', '1', '1'});
-	for (unsigned long i=0; i<characters.size(); ++i)
-		std::cout << characters[i] << ' ';
-	std::cout << '\n';
-	*/
 }
 
 void basic_tests() {
@@ -314,13 +289,12 @@ void basic_tests() {
 	std::cout << "------------------\n";
 
 	NS::vector<int> b(2, 3);
-	//std::cout << b[0] << ' ' << b[1] << std::endl;
 	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << "\tmax_size:" << b.max_size() << std::endl;
 	b.push_back(time(0)%3);
 	b.push_back(time(0)%14);
 	b.push_back(time(0)%10);
 	std::cout << "size:" << b.size() << "\tcapacity:" << b.capacity() << std::endl;
-	//std::cout << b[0] << ' ' << b[1] << ' ' << b[2] << ' ' << b[3] << ' ' << b[4] << std::endl;
+
 	for (unsigned int i = 0; i < b.size(); i++)
 		std::cout << b[i] << ' ';
 	std::cout << std::endl;
@@ -333,23 +307,17 @@ void basic_tests() {
 	NS::vector<int> c(2, 3);
 	c.assign(7, 100);
 	NS::vector<int>::iterator iter = c.begin();
-	//NS::vector<int>::const_iterator iter = c.end();
+	(void)iter;
 	for (unsigned int i = 0; i < c.size(); i++)
 		std::cout << c[i] << ' ';
 	std::cout << std::endl;
 
 	int myints[] = {1776,7,4};(void)myints;
 	NS::vector<int> d;
-	//it = c.begin() + 1;
-	//d.
 	std::cout << "------------------\n";
 
 	NS::vector<int> myvector_2 (3,100);
-	myvector_2.reserve(1000); // ERROR BETWEEN WITH THE ADDRESS OF it IF I REMOVE THIS
 	NS::vector<int>::iterator it;
-	//NS::vector<int> myvector_2;
-	//for (int i=1; i<=3; i++)
-	//	myvector_2.push_back(i);
 	std::cout << "A " << &it[0] << std::endl;
 	it = myvector_2.begin();
 	std::cout << "B " << &it[0] << std::endl;
@@ -376,46 +344,6 @@ void basic_tests() {
 	*/
 }
 
-void	checkErase(NS::vector<int> &vct, NS::vector<std::string>::iterator &it) {
-	(void)vct;
-	(void)it;
-	/*
-	static int i = 0;
-	std::cout << "[" << i++ << "] " << "erase: " << it - vct.begin() << std::endl;
-	printSize(vct);
-	*/
-}
-
-void ft_erase_mli(void) {
-	/*
-	NS::vector<std::string> vct(10);
-
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = std::string((vct.size() - i), i + 65);
-	printSize(vct);
-
-	checkErase(vct, vct.erase(vct.begin() + 2));
-
-	checkErase(vct, vct.erase(vct.begin()));
-	checkErase(vct, vct.erase(vct.end() - 1));
-
-	checkErase(vct, vct.erase(vct.begin(), vct.begin() + 3));
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end() - 1));
-
-	vct.push_back("Hello");
-	vct.push_back("Hi there");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.end() - 3, vct.end()));
-
-	vct.push_back("ONE");
-	vct.push_back("TWO");
-	vct.push_back("THREE");
-	vct.push_back("FOUR");
-	printSize(vct);
-	checkErase(vct, vct.erase(vct.begin(), vct.end()));
-	*/
-}
-
 void ft_erase() {
 	NS::vector<int> myvector;
 
@@ -432,11 +360,6 @@ void ft_erase() {
 	for (unsigned i=0; i<myvector.size(); ++i)
 		std::cout << ' ' << myvector[i];
 	std::cout << '\n';
-
-
-
-	//ft_erase_mli();
-
 
 	NS::vector<int>::iterator it = myvector.begin() + 2;
 	(void)it;
@@ -582,9 +505,9 @@ void map_find() {
 	mymap['d']=200;
 
 	it = mymap.find('b');
-	/*
 	if (it != mymap.end())
 		mymap.erase (it);
+	/*
 	*/
 
 	// print content:
@@ -596,7 +519,6 @@ void map_find() {
 }
 
 void map_count() {
-	/*
 	NS::map<char,int> mymap;
 	char c;
 
@@ -614,6 +536,7 @@ void map_count() {
 	}
 	std::cout << std::endl;
 	std::cout << "a0 b1 c0 d1 e1 f0 g1 \n";
+	/*
 	*/
 }
 
@@ -624,12 +547,7 @@ void map_erase() {
 	// insert some values:
 	for (int i = 0; i < 10; i++)
 		mymap.insert(NS::pair<char, int>(i + 'a', i * 10));
-	/*mymap['a']=10;
-	mymap['b']=20;
-	mymap['c']=30;
-	mymap['d']=40;
-	mymap['e']=50;
-	mymap['f']=60;*/
+
 	mymap.print_all();
 	it=mymap.find('b');
 	mymap.erase (it);                   // erasing by iterator
@@ -638,8 +556,6 @@ void map_erase() {
 
 	it=mymap.find ('e');
 	mymap.erase ( it, mymap.end() );    // erasing by range
-	/*
-	*/
 
 	// show content:
 	std::cout << "testing erase: ";
@@ -648,12 +564,6 @@ void map_erase() {
 	std::cout << std::endl;
 	std::cout << "testing erase: a => 10 d => 40\n";
 
-	/*
-	NS::map<char,int>::const_iterator cit = mymap.begin();
-	std::cout << cit->first << std::endl;
-	cit++;
-	std::cout << cit->first << std::endl;
-	*/
 }
 
 void map_operator() {
@@ -710,20 +620,10 @@ void map_upper_bound() {
 }
 
 void map_marc_erase() {
-	/*
-	std::list<NS::pair<const int, std::string> > lst;
-	unsigned int lst_size = 10;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(NS::pair<const int, std::string>(i, std::string((lst_size - i), i + 65)));
-	NS::map<int, std::string> mp(lst.begin(), lst.end()); //10 elements
-	//printSize(mp);
-	*/
-	NS::map<int, int> mp; //10 elements
+	NS::map<int, int> mp;
 	for (unsigned int i = 0; i < 10; ++i)
 		mp.insert(NS::pair<int, int>(i, i*10));
 	mp.print_all();
-	/*
-	*/
 	mp.erase(++mp.begin());
 
 	mp.erase(mp.begin());
@@ -736,7 +636,6 @@ void map_marc_erase() {
 
 	mp[10] = 100;
 	mp[11] = 110;
-	//printSize(mp);
 	mp.erase(--(--(--mp.end())), mp.end());
 
 	mp.print_all();
@@ -745,7 +644,6 @@ void map_marc_erase() {
 	mp[13] = 130;
 	mp[14] = 140;
 	mp[15] = 150;
-	//printSize(mp);
 	mp.erase(mp.begin(), mp.end());	
 	mp.print_all();
 	/*
@@ -754,26 +652,24 @@ void map_marc_erase() {
 
 int main() {
 	map_marc_erase();
-	//test_list();
-	//map_find();
-	//map_count();
-	//map_erase();
-	//map_operator();
+	test_list();
+	map_find();
+	map_count();
+	map_erase();
+	map_operator();
 	std::cout << "---------------------------------\n";
-	//map_upper_bound();
-	//map_empty();
-	//ft_test();
-	//stack_size();
-	//stack_push();
-	//pair_constructor();
+	map_upper_bound();
+	map_empty();
+	ft_test();
+	stack_size();
+	stack_push();
+	pair_constructor();
 
-	/*
 	map_std();
-	test_tree();
+
 	std::cout << "---------------------------------\n";
+	/*
 	*/
-	//ICI
-	/* 
 	NS::map<int, int> a;
 	a.insert(NS::pair<int,int>(5, 104));
 	a.insert(NS::pair<int,int>(1, 103));
@@ -784,9 +680,9 @@ int main() {
 	a.insert(NS::pair<int,int>(8, 106)); //already inserted
 	a.erase(5);
 	a.print_all();
+	/* 
 	*/
 
-	/*
 	a.erase(2);
 	a.erase(3);
 	a.erase(1);
@@ -799,27 +695,14 @@ int main() {
 	a.insert(NS::pair<int,int>(3, 106));
 	a.print_all();
 
-
-ft::map_iterator<ft::pair<const int, int>, ft::node<ft::pair<const int, int> > *>::value_type
-ft::pair<const int, int>
-
-	std::string str = "ok boomer";
+	std::string str = "ok 42";
 	char * writable = new char[str.size() + 1];
 	(void)writable;
-	NS::map<int, int> a;
-	while (1) {
-		a.insert(NS::pair<int,int>(2, 104));
-		a.erase(2);
-	}
-	*/
-	/*
-	//ICI
 	std::cout << "---------------------------------\n";
 	
 	NS::map<int, int>::iterator it = a.begin();
 	NS::map<int, int>::iterator it_end = a.end();
 	std::cout << "size: " << a.size() << std::endl;
-	//std::cout << it->first << '@' << it_end->first;
 	for (;it != it_end; it++) {
 		std::cout << it->first << ' ';
 	}
@@ -837,7 +720,6 @@ ft::pair<const int, int>
 	}
 	std::cout << std::endl;
 	std::cout << "---------------------------------\n";
-	*/
-
+	
 	return 0;
 }

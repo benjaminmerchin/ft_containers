@@ -26,22 +26,15 @@ public:
 	~map_iterator() {}
 
 	map_iterator& operator++ (void) {increase(); return *this;}
-	map_iterator operator++ (int) {map_iterator it = *this; ++(*this); return *this;}
+	map_iterator operator++ (int) {map_iterator it = *this; ++(*this); return it;}
 	map_iterator& operator-- (void) {decrease(); return *this;}
-	map_iterator operator-- (int) {map_iterator it = *this; --(*this); return *this;}
+	map_iterator operator-- (int) {map_iterator it = *this; --(*this); return it;}
 
 	reference operator*() const {return _node->value;}
 	pointer operator->() const {return &(operator*());}
 	node_pointer get_node() {return _node;}
 	node_pointer get_node() const {return _node;}
-	//pointer operator->() {return &_node->value;}
-	//pointer operator->() const {return &_node->value;}
 	operator map_iterator<const T, node_pointer>() const {return map_iterator<const T, node_pointer>(_node);}
-
-	//template<class U>
-	//bool operator==(const map_iterator<T, node_pointer> other) {return _node == other._node;}
-	//template<class U>
-	//bool operator!=(const map_iterator<T, node_pointer> other) {return _node != other._node;}
 
 private:
 	void increase() {

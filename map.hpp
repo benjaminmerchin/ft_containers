@@ -7,8 +7,6 @@
 #include "utils.hpp"
 #include "reverse_iterator.hpp"
 
-#define DEBUG 0
-
 namespace ft {
 
 template <typename V>
@@ -17,17 +15,15 @@ struct node {
 	node *left;
 	node *right;
 	node *parent;
-//	int height;
 	bool last;
-	node(V v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p)/*, height(1)*/, last(e) {}
+	node(V v, node *l, node *r, node *p, bool e = false) : value(v), left(l), right(r), parent(p), last(e) {}
 	~node() {}
 };
 
 //Association of key and value_type https://cplusplus.com/reference/map/map/
-//Tree Tutorial used: https://www.geeksforgeeks.org/avl-tree-set-2-deletion/
 template < class Key,                                           // map::key_type
            class T,                                             // map::mapped_type
-           class Compare = ft::less<Key>,                      // map::key_compare
+           class Compare = ft::less<Key>,                       // map::key_compare
            class Alloc = std::allocator<ft::pair<const Key,T> > // map::allocator_type
            >
 class map {
@@ -61,16 +57,6 @@ public:
 	typedef map_iterator<const value_type, node_type*>            const_iterator;
 	typedef ft::reverse_iterator<iterator>                        reverse_iterator;
 	typedef ft::reverse_iterator<const_iterator>                  const_reverse_iterator;
-/*
-	iterator	a bidirectional iterator to value_type	convertible to const_iterator
-	const_iterator	a bidirectional iterator to const value_type	
-	reverse_iterator	reverse_iterator<iterator>	
-	const_reverse_iterator	reverse_iterator<const_iterator>
-*/
-
-// 	template <class Type> struct rebind {
-//   typedef allocator<Type> other;
-// };
 
 protected:
 	node_allocator _alloc_type;
@@ -88,9 +74,7 @@ public:
 	//copy (3)
 	map (const map& x) : _alloc_type(x._alloc_type), _key_compare(x._key_compare), _size(0), _root(NULL) {*this = x;}
 	~map () {clear_from_node(_root);}
-
 	map& operator= (const map& x) {
-		if (DEBUG) std::cerr << "BBBBB\n";
 		clear_from_node(_root);
 		insert(x.begin(), x.end());
 		return *this;
@@ -114,6 +98,8 @@ public:
 		return const_iterator(temp);
 	}
 	iterator end() {
+		if (!_root)
+			initialize();
 		if (_size == 0)
 			return iterator(_root);
 		node_type * temp = _root;
@@ -141,31 +127,23 @@ public:
 
 //ELEMENT ACCESS
 	mapped_type& operator[] (const key_type& k) {
-		if (DEBUG) std::cerr << k << ' ' << mapped_type() << " operator[]\n";
-		node_type *temp = position_of_a_key(k);
+		node_type *temp = position_of_a_key(k, _root);
 		if (temp)
 			return temp->value.second;
 		insert(value_type(k,mapped_type()));
-		return position_of_a_key(k)->value.second;
-		/*
-		return insert(value_type(k,mapped_type())).first->second;
-		*/
+		return position_of_a_key(k, _root)->value.second;
 	}
 
 //MODIFIERS
 	pair<iterator,bool> insert (const value_type& val) {
-		if (DEBUG) std::cerr << "insert:   " << val.first << ' ' << val.second << std::endl;
-
-		//std::cerr << "ICI\n";
-
 		size_t backup = _size;
 		insert_node_check_root(val, _root);
-		return (pair<iterator,bool>(position_of_a_key(val.first), backup != _size));
+		return (pair<iterator,bool>(position_of_a_key(val.first, _root), backup != _size));
 	}
 	iterator insert (iterator position, const value_type& val) {
 		(void)position;
 		insert_node_check_root(val, _root);
-		return iterator(position_of_a_key(val.first));
+		return iterator(position_of_a_key(val.first, _root));
 	}
 	template <class InputIterator>
 	void insert (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) {
@@ -211,19 +189,19 @@ public:
 
 //OPERATIONS
 	iterator find (const key_type& k) {
-		node_type *temp = position_of_a_key(k);
+		node_type *temp = position_of_a_key(k, _root);
 		if (temp)
 			return iterator(temp);
 		return end();
 	}
 	const_iterator find (const key_type& k) const {
-		node_type *temp = const_position_of_a_key(k);
+		node_type *temp = const_position_of_a_key(k, _root);
 		if (temp)
 			return const_iterator(temp);
 		return end();
 	}
-	size_type count (const key_type& k) const {//1 if found, 0 otherwise, use find
-		node_type *temp = const_position_of_a_key(k);
+	size_type count (const key_type& k) const {
+		node_type *temp = const_position_of_a_key(k, _root);
 		if (temp)
 			return 1;
 		return 0;
@@ -298,42 +276,10 @@ private:
 	node_type* new_node(const value_type& val, node_type *parent) {
 		node_type *temp = _alloc_type.allocate(1);
 		_alloc_type.construct(temp, node_type(val, NULL, NULL, parent, false));
-		/*
-		std::cerr << temp->last << "-KKKOKOKKO\n";
-		temp->last = true;
-		temp->parent = parent;
-		temp->right = NULL;
-		temp->left = NULL;
-		temp->height = 1;
-		temp->end = false;
-		*/
-		if (DEBUG) std::cerr << "new_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
-		//node<value_type> 
-	/*
-		temp->value = pair<int,int>(1, 2);
-		temp->value.first = val.first;
-		temp->value.second = val.second;
-		(void)val;
-		(void)parent;
-		(void)temp;
-	*/
 		_size++;
 		return temp;
 	}
 
-/*
-	int max(int a, int b) {return (a > b)? a : b;}
-	int height(node_type *node) {
-		if (!node)
-			return 0;           
-		return node->height;
-	}
-	int get_balance(node_type *node) {
-		if (!node)
-			return 0;
-		return height(node->left) - height(node->right);
-	}
-*/
 	node_type* min_value_node(node_type *node) {
 		node_type *current = node;
 		while (current->left != NULL)
@@ -348,17 +294,13 @@ private:
 		return current;
 	}
 
-	//void insert_node_check_root(const value_type& val, node_type *current, node_type *parent = NULL);
-
 	node_type* insert_node_check_root(const value_type& val, node_type *current, node_type *parent = NULL) {
 		if (!_root) {
 			_root = new_node(val, NULL);
-			if(DEBUG) std::cerr << "                      GENERATED LAST\n";
-			node_type *last = new_node(val, _root); //dummy value in the last node
+			node_type *last = new_node(value_type(key_type(), mapped_type()), _root);
 			_size--;
 			_root->right = last;
 			last->last = true;
-			if(DEBUG) std::cerr << _root->last << ' ' << _root->right->last << std::endl;
 			return _root;
 		}
 		if (_root->last) {
@@ -375,7 +317,6 @@ private:
 		if (!current)
 			return new_node(val, parent);
 		if (current->last) {
-			if(DEBUG) std::cerr << val.first << ' ' << val.second << ' ' << current->value.first << ' ' << parent->value.first << "\n";
 			node_type *to_insert = new_node(val, parent);
 			current->parent = to_insert;
 			to_insert->right = current;
@@ -386,53 +327,21 @@ private:
 			current->left = insert_node(val, current->left, current);
 		else if (_key_compare(current->value.first, val.first))
 			current->right = insert_node(val, current->right, current);
-		else
-			return current;
-
-/*
-		current->height = 1 + max(height(current->left), height(current->right));
-		//rotate here if neccessary
-		// Left Left Case
-		if (balance > 1 && getBalance(root->left) >= 0)
-			return rightRotate(root);
-
-		// Left Right Case
-		if (balance > 1 && getBalance(root->left) < 0)
-		{
-			root->left = leftRotate(root->left);
-			return rightRotate(root);
-		}
-
-		// Right Right Case
-		if (balance < -1 && getBalance(root->right) <= 0)
-			return leftRotate(root);
-
-		// Right Left Case
-		if (balance < -1 && getBalance(root->right) > 0)
-		{
-			root->right = rightRotate(root->right);
-			return leftRotate(root);
-		}
-*/
-
 		return current;
 	}
 
 	node_type* delete_node(node_type *current, const key_type& key) {
-		//return current; //retirer
 		if (!current || current->last)
 			return current;
 		if (_key_compare(key, current->value.first))
 			current->left = delete_node(current->left, key);
 		else if (_key_compare(current->value.first, key))
 			current->right = delete_node(current->right, key);
-		else { //we found the node
-			//deleting process here
+		else {
 			if (!current->left || !current->right) {
 				node_type *temp = current->left ? current->left : current->right;
 				if (!current->left && !current->right) {
 					temp = current;
-					if (DEBUG) std::cerr << "del_node: " << temp->value.first << ' ' << temp->value.second << std::endl;
 					_alloc_type.destroy(temp);
 					_alloc_type.deallocate(temp, 1);
 					current = NULL;
@@ -442,11 +351,9 @@ private:
 					temp->parent = current->parent;
 					node_type *temp2 = current;
 					current = temp;
-					if (DEBUG) std::cerr << "del_node: " << temp2->value.first << ' ' << temp2->value.second << std::endl;
 					_alloc_type.destroy(temp2);
 					_alloc_type.deallocate(temp2, 1);
 					_size--;
-					//std::cerr << "uwuwuwuwuwuwu\n";
 				}
 			}
 			else {
@@ -460,25 +367,13 @@ private:
 				temp->parent->left = NULL;
 				temp->parent = current->parent;
 				if (_root == current)
-					_root = temp; //doute ici
-				if (DEBUG) std::cerr << "del_node: " << current->value.first << ' ' << current->value.second << std::endl;
+					_root = temp;
 				_alloc_type.destroy(current);
 				_alloc_type.deallocate(current, 1);
 				_size--;
-				/*
-				node_type *temp = min_value_node(current->right);
-				current->value = temp->value;
-				current->right = delete_node(current->right, key);
-				*/
-				//std::cerr << "problem 2 child\n";
 				current = temp;
 			}
 		}
-
-	//	if (!current)
-	//		return current;
-//		current->height = 1 + max(height(current->left), height(current->right));
-		//rotate here if necessary
 		return current;
 	}
 
@@ -495,20 +390,32 @@ private:
 		}
 	}
 
-	node_type* position_of_a_key(const key_type& key) { //passer en mode insert_node pour plus d'opti car cette fonction est appelee souvent
-		iterator ite = end();
-		for (iterator it = begin(); it != ite; it++)
-			if (it->first == key)
-				return it.get_node();
-		return NULL;
+	node_type* position_of_a_key(const key_type& key, node_type* current) {
+		if (!current || current->last)
+			return NULL;
+		if (_key_compare(key, current->value.first))
+			return position_of_a_key(key, current->left);
+		else if (_key_compare(current->value.first, key))
+			return position_of_a_key(key, current->right);
+		else
+			return current;
 	}
 
-	node_type* const_position_of_a_key(const key_type& key) const { //passer en mode insert_node pour plus d'opti car cette fonction est appelee souvent
-		const_iterator ite = end();
-		for (const_iterator it = begin(); it != ite; it++)
-			if (it->first == key)
-				return it.get_node();
-		return NULL;
+	node_type* const_position_of_a_key(const key_type& key, node_type* current) const {
+		if (!current || current->last)
+			return NULL;
+		if (_key_compare(key, current->value.first))
+			return const_position_of_a_key(key, current->left);
+		else if (_key_compare(current->value.first, key))
+			return const_position_of_a_key(key, current->right);
+		else
+			return current;
+	}
+
+	void initialize() {
+		insert(value_type(key_type(), mapped_type()));
+		_root->last = true;
+		_size--;
 	}
 
 };
@@ -538,32 +445,3 @@ private:
 }
 
 #endif
-
-/*
-const ft::map<>
-int, foo<int>, std::__1::less<int>, std::__1::allocator<ft::pair<const int, foo<int> > > 
-
-ft::map<>::operator[](char const&)
-char, int, std::__1::less<char>, std::__1::allocator<ft::pair<char const, int> > 
-
-
-const ft::map<>
-int, 
-std::__1::basic_string<char>, 
-ft::less<int>,
-std::__1::allocator<ft::pair<const int, std::__1::basic_string<char> > > 
-
-
-
-
-
-
-
-const map_iterator<ft::pair<const char, int>, ft::node<ft::pair<const char, int> > *>
-
-
-
-
-
-
-*/
