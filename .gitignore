@@ -1,7 +1,15 @@
 .DS_Store
 objects
+ft_objects
+std_objects
 containers_test
+containers
+containers.txt
 ft_containers
+ft_containers.txt
+std_containers
+std_containers.txt
 .vscode
 42_Containator
 ft_containers_test
+diff.txt
